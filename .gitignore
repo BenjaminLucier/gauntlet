@@ -1,0 +1,10 @@
+/target
+rust-project.json
+
+# your attempts, history and progress
+/arena
+/arena.bak
+
+# toolchains for the tracks
+/tracks/python/.venv
+/tracks/typescript/node_modules
