@@ -1,0 +1,31 @@
+title = "Union-Find"
+difficulty = "medium"
+
+complexity = '''
+- `new`: `O(n)`
+- `find`, `union`, `connected`, `component_size`: `O(α(n))` amortized — inverse Ackermann, at most 4 for any realistic `n`
+- `count`: `O(1)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Store a `parent` array: each element points at another element of its set,
+and a set's *root* points at itself. `find` follows parents up to the root;
+`union` makes one root the parent of the other. Keep a running count of sets.
+'''
+
+[[hints]]
+text = '''
+Two tricks make the trees shallow. **Union by size**: hang the smaller tree
+under the larger one (keep a `size` per root). **Path compression**: after
+`find` reaches the root, point the nodes you walked through closer to it.
+Either alone gives `O(log n)`; both give near-constant time.
+'''
+
+[[hints]]
+text = '''
+Path *halving* compresses in the same single loop as the walk:
+`while parent[x] != x { parent[x] = parent[parent[x]]; x = parent[x]; }`.
+No recursion, no second pass, and it keeps the same amortized bound.
+'''

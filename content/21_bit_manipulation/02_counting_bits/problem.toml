@@ -1,0 +1,19 @@
+title = "Counting Bits"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)` extra besides the output
+'''
+
+[[hints]]
+text = '''
+Counting each number's bits separately is `O(n log n)`. Reuse answers you have
+already computed.
+'''
+
+[[hints]]
+text = '''
+`i >> 1` is smaller than `i` and has the same bits except the lowest one.
+(Alternatively, `i & (i - 1)` is `i` with its lowest set bit cleared.)
+'''

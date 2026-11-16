@@ -1,0 +1,25 @@
+title = "Non-overlapping Intervals"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)`
+- Space: `O(1)` extra (besides sorting)
+'''
+
+[[hints]]
+text = '''
+Equivalently: keep as many pairwise non-overlapping intervals as possible
+(classic activity selection).
+'''
+
+[[hints]]
+text = '''
+Sort by **end**. Greedily keep an interval whenever it starts at or after the
+end of the last kept one — finishing early leaves the most room for the rest.
+'''
+
+[[hints]]
+text = '''
+If you sort by start instead, then on a conflict you must drop the one that
+ends **later**, not the newcomer.
+'''

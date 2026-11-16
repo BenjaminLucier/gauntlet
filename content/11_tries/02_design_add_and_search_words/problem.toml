@@ -1,0 +1,21 @@
+title = "Design Add and Search Words Data Structure"
+difficulty = "medium"
+
+complexity = '''
+- `insert`: `O(L)`
+- `search`: `O(L)` without wildcards; each `.` may branch into up to 26
+  children, so the worst case is bounded by the size of the trie
+'''
+
+[[hints]]
+text = '''
+Store the words in a trie (see the previous problem). A pattern without dots
+is a plain walk down the trie.
+'''
+
+[[hints]]
+text = '''
+On a `.`, try every existing child: a recursive `matches(node, rest)` that
+returns `true` as soon as any branch matches the rest of the pattern. At the
+end of the pattern, the node must be marked as the end of a word.
+'''

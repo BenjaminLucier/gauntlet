@@ -1,0 +1,30 @@
+title = "Dijkstra's Algorithm"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O((V + E) log V)` with a binary heap — each edge pushes at most one entry
+- Space: `O(V + E)`: the distance array plus up to `E` heap entries
+'''
+
+[[hints]]
+text = '''
+Keep `dist[v]` as the best distance found so far and a min-heap of
+`Reverse((distance, vertex))`. Pop the closest vertex; because weights are
+non-negative, its distance is now final. Relax each outgoing edge, pushing
+`(new distance, w)` whenever it improves `dist[w]`.
+'''
+
+[[hints]]
+text = '''
+`BinaryHeap` has no decrease-key, so a vertex can be in the heap several
+times. When you pop `(d, v)` with `d > dist[v]`, it's a stale entry for a
+distance that has since improved: skip it, or you'll rescan `v`'s edges once
+per stale copy.
+'''
+
+[[hints]]
+text = '''
+For the path, record `parent[w] = v` whenever an edge `v → w` improves
+`dist[w]`, then walk back from `t`. Use `d.checked_add(w)`: on overflow there
+is no valid path that way, so just don't relax that edge.
+'''

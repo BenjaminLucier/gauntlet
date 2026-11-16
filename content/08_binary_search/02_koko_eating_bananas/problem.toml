@@ -1,0 +1,19 @@
+title = "Koko Eating Bananas"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log M)` where `M = max(piles)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+The answer lies in `[1, max(piles)]`, and if speed `k` works then every faster
+speed works too. That monotonicity is what binary search needs.
+'''
+
+[[hints]]
+text = '''
+Binary search for the smallest `k` whose total hours `sum(ceil(p / k))` is
+`<= h`. Rule out the impossible case before searching.
+'''

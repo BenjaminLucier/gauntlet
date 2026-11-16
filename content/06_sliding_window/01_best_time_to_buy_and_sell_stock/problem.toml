@@ -1,0 +1,19 @@
+title = "Best Time to Buy and Sell Stock"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+For each possible selling day, the best buying day is the cheapest day
+*up to* it.
+'''
+
+[[hints]]
+text = '''
+Scan once, keeping the lowest price seen so far and the best
+`price - lowest` so far.
+'''

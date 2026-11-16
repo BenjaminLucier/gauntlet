@@ -1,0 +1,26 @@
+title = "Search in Rotated Sorted Array"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(log n)` comparisons
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+For any `mid`, at least one of the halves on either side of it is sorted
+normally. Compare the first element of the window with `nums[mid]` to find out
+which.
+'''
+
+[[hints]]
+text = '''
+If the target lies within the sorted half's value range, search there;
+otherwise search the other half. Mind `<` vs `<=` at the boundaries.
+'''
+
+[[hints]]
+text = '''
+Alternative: first find the rotation point (problem 31), then do a normal
+binary search on the correct side.
+'''

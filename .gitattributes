@@ -1,0 +1,7 @@
+# LF line endings in the working tree on every platform, whatever
+# core.autocrlf says. The problems in content/ are embedded in the binary
+# byte for byte (a release built on Windows included), and templates are
+# compared with the working files made from them.
+* text=auto eol=lf
+content/** text eol=lf
+*.rs text eol=lf

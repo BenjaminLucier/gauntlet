@@ -1,0 +1,25 @@
+title = "Evaluate Reverse Polish Notation"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Push numbers onto a stack. On an operator, pop two values, apply it, and push
+the result. The answer is the single value left at the end.
+'''
+
+[[hints]]
+text = '''
+Order matters for `-` and `/`: the **first** value popped is the right-hand
+operand. Match on the whole token, so `"-3"` isn't mistaken for an operator.
+'''
+
+[[hints]]
+text = '''
+Check for a zero divisor before dividing: `checked_div` returns `None` for both
+division by zero and overflow, and those are different errors here.
+'''

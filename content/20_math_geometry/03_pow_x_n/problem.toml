@@ -1,0 +1,19 @@
+title = "Pow(x, n)"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(log |n|)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Multiplying `x` by itself `|n|` times takes about two billion steps when `n` is
+near `i32::MIN` or `i32::MAX`. Exponentiation by squaring takes about 60:
+`x^n = (x^2)^(n/2)`, times one extra `x` when `n` is odd.
+'''
+
+[[hints]]
+text = '''
+For negative `n`, compute `(1/x)^|n|`. Get `|n|` without overflowing first.
+'''

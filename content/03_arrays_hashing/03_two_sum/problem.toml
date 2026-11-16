@@ -1,0 +1,20 @@
+title = "Two Sum"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)` expected
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+The brute force tries every pair — `O(n^2)`. For each `nums[j]`, what value
+would you need to have seen earlier?
+'''
+
+[[hints]]
+text = '''
+Keep a `HashMap<value, index>` of everything seen so far. Look up the
+complement *before* inserting the current element, so an element never pairs
+with itself.
+'''

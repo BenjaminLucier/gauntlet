@@ -1,0 +1,27 @@
+title = "Fn, FnMut and FnOnce"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Each doc comment names the trait or method it's after. The three traits are
+on their std pages (start with
+[`Fn`](https://doc.rust-lang.org/std/ops/trait.Fn.html)): `Fn` can be
+called through `&`, `FnMut` needs `&mut`, `FnOnce` consumes the closure.
+'''
+
+[[hints]]
+text = '''
+To call an `FnMut` parameter you must own it mutably: write `mut f: impl FnMut()`
+in your signature. For `best_by`: on a tie `max_by_key` returns the *last*
+maximum, so arrange for the earliest word to be the last one it sees. A
+`Box<dyn FnOnce()>` is called like any closure, `f()` — but only by value, so
+take it out of its `Option` first.
+'''
+
+[[hints]]
+text = '''
+A path to a function or method is a value: `str::len` is an `fn(&str) -> usize`
+and `i32::abs` an `fn(i32) -> i32`, so `.map(str::len)` works wherever
+`.map(|s| s.len())` would — given the element type matches (`copied()` turns
+`&&str` into `&str`).
+'''

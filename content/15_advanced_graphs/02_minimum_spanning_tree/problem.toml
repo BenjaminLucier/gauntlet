@@ -1,0 +1,32 @@
+title = "Minimum Spanning Tree"
+difficulty = "medium"
+
+complexity = '''
+- Kruskal: `O(m log m)` for the sort, plus near-constant `find`/`union` with
+  path compression and union by size
+- Prim: `O(m log m)` with a lazy binary heap
+- Space: `O(n + m)`
+'''
+
+[[hints]]
+text = '''
+Kruskal: consider edges from lightest to heaviest and keep an edge exactly
+when its endpoints are in different components so far. Prim: grow one tree
+from vertex 0, always adding the cheapest edge that leaves it.
+'''
+
+[[hints]]
+text = '''
+Kruskal's "different components?" test is a union-find. Without path
+compression or union by size (or rank), adversarial edge orders build long
+parent chains and each `find` walks all of them; use both for the
+near-constant bound.
+'''
+
+[[hints]]
+text = '''
+Prim with a `BinaryHeap<Reverse<(u64, usize)>>`: push every edge out of a
+newly added vertex, pop the cheapest, and skip it if its vertex is already in
+the tree. Either algorithm knows the graph is disconnected when it finishes
+with fewer than `n` vertices (or `n - 1` edges).
+'''

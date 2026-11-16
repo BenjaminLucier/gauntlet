@@ -1,0 +1,25 @@
+title = "BTreeMap and Ranges"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Each doc comment names the method it's after. Look it up on
+<https://doc.rust-lang.org/std/collections/struct.BTreeMap.html> and
+<https://doc.rust-lang.org/std/collections/struct.BTreeSet.html>.
+'''
+
+[[hints]]
+text = '''
+`range` takes any range expression (`a..b`, `a..=b`, `..x`, `x..`) and returns
+a double-ended iterator: `.next()` is the smallest item in the range,
+`.next_back()` the largest. That's floor and ceiling in one line each. It
+panics if the start is after the end, so guard backwards ranges first.
+'''
+
+[[hints]]
+text = '''
+For bounds the range syntax can't express — "strictly greater than x", or a
+`&str` range over `String` keys — pass a tuple of `std::ops::Bound`s:
+`set.range((Bound::Excluded(x), Bound::Unbounded))`. With `String` keys, name
+the borrowed type: `words.range::<str, _>((Bound::Included(p), Bound::Unbounded))`.
+'''

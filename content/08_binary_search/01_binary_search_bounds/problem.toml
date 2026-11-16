@@ -1,0 +1,27 @@
+title = "Binary Search & Bounds"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(log n)` comparisons (or predicate calls) for every function
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Write `partition_point` first and build everything else on it. Keep a half-open
+window `[lo, hi)` holding the boundary: everything before `lo` is known to be
+`true`, everything from `hi` on is known to be `false`.
+'''
+
+[[hints]]
+text = '''
+Test the middle: if `pred(&items[mid])` holds, the boundary is after `mid`, so
+`lo = mid + 1`; otherwise it is at or before `mid`, so `hi = mid`. Stop when
+`lo == hi`. Both updates shrink the window, so the loop always ends.
+'''
+
+[[hints]]
+text = '''
+`lower_bound` is the partition point of `x < target`; `upper_bound` of
+`x <= target`. `binary_search` checks the item at `lower_bound`.
+'''

@@ -1,0 +1,25 @@
+title = "Largest Rectangle in Histogram"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+For each bar, the best rectangle using **its** height extends left and right
+until the first strictly shorter bar on each side.
+'''
+
+[[hints]]
+text = '''
+Keep a stack of indices with increasing heights. When a shorter bar arrives,
+pop: the popped bar's rectangle ends just before the new bar and starts just
+after the bar now on top of the stack.
+'''
+
+[[hints]]
+text = '''
+Process an extra height-`0` bar after the last one to flush the stack.
+'''

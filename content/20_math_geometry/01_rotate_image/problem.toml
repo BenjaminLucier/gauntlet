@@ -1,0 +1,24 @@
+title = "Rotate Image"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n^2)`
+- Space: `O(1)` extra
+'''
+
+[[hints]]
+text = '''
+After a clockwise rotation, the element at `(r, c)` ends up at `(c, n - 1 - r)`.
+'''
+
+[[hints]]
+text = '''
+A clockwise rotation equals a transpose (swap `(r, c)` with `(c, r)`) followed
+by reversing every row. Both steps are easy to do in place.
+'''
+
+[[hints]]
+text = '''
+Alternatively, rotate four cells at a time, layer by layer, from the outer ring
+inwards.
+'''

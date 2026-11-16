@@ -1,0 +1,28 @@
+title = "Combination Sum II"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(2^n)` worst case, but with duplicate-skipping the search only visits
+  prefixes of distinct combinations
+- Space: `O(n)` besides the output
+'''
+
+[[hints]]
+text = '''
+Sort the candidates so equal values sit next to each other.
+'''
+
+[[hints]]
+text = '''
+Backtrack with `(start, remaining)`, recursing with `i + 1` since each element
+is used at most once.
+'''
+
+[[hints]]
+text = '''
+Inside the loop at one recursion level, skip `candidates[i]` if
+`i > start && candidates[i] == candidates[i - 1]` — choosing the second `1` at
+the same position as the first `1` would just repeat that branch. With 100
+ones, generating index subsets and deduplicating means ~10^25 subsets: it
+never finishes.
+'''

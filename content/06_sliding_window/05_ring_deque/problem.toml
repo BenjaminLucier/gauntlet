@@ -1,0 +1,32 @@
+title = "Ring Buffer Deque"
+difficulty = "medium"
+
+complexity = '''
+- `push_front`, `push_back`: amortized `O(1)`
+- `pop_front`, `pop_back`, `front`, `back`, `get`, `len`: `O(1)`
+- Iterating: `O(1)` per element
+- Space: `O(capacity)`, with `capacity < 4 * len` once the deque has grown (see Constraints)
+'''
+
+[[hints]]
+text = '''
+Keep a `head` index (where the front element lives) and a `len`. The element
+at logical position `i` lives in physical slot `(head + i) % capacity`.
+Neither end ever moves elements: `push_front` steps `head` back by one,
+`pop_front` steps it forward.
+'''
+
+[[hints]]
+text = '''
+Stepping back from slot 0 must land on the last slot, and `head - 1`
+underflows a `usize`. Write it as `(head + capacity - 1) % capacity`. And
+`% 0` panics: make sure the buffer has room *before* you do any index
+arithmetic.
+'''
+
+[[hints]]
+text = '''
+To grow, allocate a buffer twice as big and move the elements across **in
+logical order**, starting at slot 0 of the new buffer; then `head = 0`.
+Copying slot `i` to slot `i` would leave a wrapped-around deque scrambled.
+'''

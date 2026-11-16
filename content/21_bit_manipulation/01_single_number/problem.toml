@@ -1,0 +1,19 @@
+title = "Single Number"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+A `HashSet` that you insert into and remove from works in `O(n)` space. Can you
+get rid of the set?
+'''
+
+[[hints]]
+text = '''
+XOR is commutative and associative, `a ^ a == 0`, and `a ^ 0 == a`. What is the
+XOR of all elements?
+'''

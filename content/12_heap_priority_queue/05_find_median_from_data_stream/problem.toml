@@ -1,0 +1,27 @@
+title = "Find Median from Data Stream"
+difficulty = "hard"
+
+complexity = '''
+- `add`: `O(log n)`
+- `median`: `O(1)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Split the numbers into a lower half and an upper half. The median only depends
+on the largest of the lower half and the smallest of the upper half.
+'''
+
+[[hints]]
+text = '''
+Keep the lower half in a max-heap and the upper half in a min-heap. After each
+insert, rebalance so the lower half has the same size as the upper half or
+exactly one more.
+'''
+
+[[hints]]
+text = '''
+Compute the even-count median in floating point — `(a + b) / 2` in integers
+turns `1.5` into `1`, and can overflow on the way.
+'''

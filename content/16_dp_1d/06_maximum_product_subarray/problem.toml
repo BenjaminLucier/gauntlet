@@ -1,0 +1,20 @@
+title = "Maximum Product Subarray"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Unlike maximum subarray *sum*, a very *negative* running product can become the
+largest one after multiplying by another negative number.
+'''
+
+[[hints]]
+text = '''
+Track both the largest and the smallest product of a subarray **ending at**
+the current index. For each `x`, the new pair comes from
+`{x, x * largest_prev, x * smallest_prev}`. A zero resets both.
+'''

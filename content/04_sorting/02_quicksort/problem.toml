@@ -1,0 +1,33 @@
+title = "Quicksort"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)` expected with a random pivot; `O(n * d)` when there are only `d` distinct values (all-equal input is a single `O(n)` pass)
+- `partition3`: `O(n)` time, at most one comparison per element (`n - 1` with the pivot kept in the slice)
+- Space: `O(1)` extra besides the call stack: `O(log n)` deep in expectation with a random pivot, and guaranteed if you recurse only into the smaller side (not tested)
+- Not stable
+'''
+
+[[hints]]
+text = '''
+`partition3`: move the pivot to the front, then keep three boundaries — `lt`
+(start of the "equal" block), `i` (next unseen element) and `gt` (start of the
+"greater" block). Look at `v[i]`: less → swap into the `lt` side, greater →
+swap to just before `gt`, equal → leave it.
+'''
+
+[[hints]]
+text = '''
+A fixed pivot position (first or last element) makes sorted input quadratic.
+Pick a random index (a tiny xorshift generator is enough) or the median of the
+first, middle and last elements. Equal keys are why the partition is 3-way: the
+whole equal block is finished and never looked at again.
+'''
+
+[[hints]]
+text = '''
+Optional, untested polish: to bound the stack, loop instead of making the second recursive call: recurse
+into the *smaller* of the `< pivot` / `> pivot` parts, then continue the loop
+on the larger one. `std::mem::take(&mut v).split_at_mut(..)` lets you
+reassign a `&mut [T]` variable to one of its own halves.
+'''

@@ -1,0 +1,27 @@
+title = "Multiply Strings"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(m + n)`
+'''
+
+[[hints]]
+text = '''
+The product of an `m`-digit and an `n`-digit number has at most `m + n`
+digits.
+'''
+
+[[hints]]
+text = '''
+Digit `i` of `a` times digit `j` of `b` (indices from the left) contributes to
+position `i + j + 1` of a result array of length `m + n`, with the carry going
+to position `i + j`. Accumulate all products, propagating carries, then strip
+leading zeros.
+'''
+
+[[hints]]
+text = '''
+Don't forget the case where either input is zero: the answer is `"0"`, not
+`"000"` or `""`.
+'''

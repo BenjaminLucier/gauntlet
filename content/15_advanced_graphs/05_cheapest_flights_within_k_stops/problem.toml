@@ -1,0 +1,26 @@
+title = "Cheapest Flights Within K Stops"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(k · E)` with `k = max_stops` (Bellman-Ford limited to `k + 1` rounds)
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Plain Dijkstra finds the cheapest route but ignores the number of stops — the
+cheapest route to an intermediate city may use too many stops, while a pricier
+one with fewer stops is the one that leads to the answer.
+'''
+
+[[hints]]
+text = '''
+Bellman-Ford's round `i` finds the cheapest routes using at most `i` edges. Run
+exactly `max_stops + 1` rounds.
+'''
+
+[[hints]]
+text = '''
+Relax from a **copy** of the previous round's prices. Updating in place lets one
+round chain several flights together and silently exceed `max_stops`.
+'''

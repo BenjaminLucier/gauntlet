@@ -1,0 +1,19 @@
+title = "Decode Ways"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Let `ways(i)` be the number of decodings of the first `i` digits. The last
+piece is either one digit or two digits.
+'''
+
+[[hints]]
+text = '''
+`ways(i)` gains `ways(i-1)` if digit `i-1` isn't `'0'`, and gains `ways(i-2)` if
+the two digits ending at `i-1` form `"10"`–`"26"`. Start with `ways(0) = 1`.
+'''

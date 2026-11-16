@@ -1,0 +1,25 @@
+title = "Box, Rc and Weak"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+Each doc comment names the function it's after; the associated functions are
+on the [`Rc`](https://doc.rust-lang.org/std/rc/struct.Rc.html) page and are
+called as `Rc::strong_count(&rc)`, not `rc.strong_count()` — `Rc` keeps its
+own methods out of the way of the value's.
+'''
+
+[[hints]]
+text = '''
+`*boxed` moves the value out of a `Box<T>` you own — unlike `*` on a `&T`,
+which can only borrow or copy. In `cancel_double_neg`, once you own a `Neg`'s
+box you can unbox it and look one level deeper, still without cloning.
+'''
+
+[[hints]]
+text = '''
+The child's `parent` field holds a `Weak`, made from the parent's `Rc`
+without bumping its strong count. For `path`, keep upgrading the current
+node's parent link until it yields nothing; you collect names leaf-first, so
+remember the order the doc comment asks for.
+'''

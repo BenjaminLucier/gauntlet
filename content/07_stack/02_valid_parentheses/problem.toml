@@ -1,0 +1,24 @@
+title = "Valid Parentheses"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Counting each bracket type is not enough — `"([)]"` has balanced counts.
+The order matters: the last unclosed bracket is the one that must close next.
+'''
+
+[[hints]]
+text = '''
+Push something onto a stack for each opening bracket. On a closing bracket,
+pop and check that it matches (an empty stack means invalid).
+'''
+
+[[hints]]
+text = '''
+At the end the stack must be empty — leftover openers mean invalid.
+'''

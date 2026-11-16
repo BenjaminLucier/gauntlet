@@ -1,0 +1,21 @@
+title = "Subtree of Another Tree"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n * m)` for the straightforward approach; `O(n + m)` is possible
+  by serializing both trees (with null markers and delimiters) and doing a
+  linear-time substring search (KMP / Z-function), or by Merkle-style hashing
+- Space: `O(h)` (or `O(n + m)` for the serialization approach)
+'''
+
+[[hints]]
+text = '''
+Start from "are these two trees identical?": `root` contains `sub` iff they are the same tree, or the
+left subtree contains it, or the right subtree contains it.
+'''
+
+[[hints]]
+text = '''
+If you go the serialization route, every value needs a delimiter and every
+missing child a marker — otherwise `[12]` "contains" `[2]`.
+'''

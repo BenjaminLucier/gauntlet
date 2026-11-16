@@ -1,0 +1,21 @@
+title = "Serialize and Deserialize Binary Tree"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)` for both directions (`n` = nodes, or tokens when decoding)
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Encoding is a plain BFS over `Option<&TreeNode>`: pop an entry, write `#` if
+it's `None`, else write the value and push both children (even missing ones).
+'''
+
+[[hints]]
+text = '''
+Decoding mirrors it: read the root token, then repeatedly pop a node from a
+queue and read exactly two tokens for its left and right child, queueing the
+children that exist. When the queue empties the tree is complete — anything
+left in the input is trailing data.
+'''

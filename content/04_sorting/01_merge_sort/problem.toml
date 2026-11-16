@@ -1,0 +1,30 @@
+title = "Merge Sort"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)` in every case, at most `n * ceil(log2 n)` comparisons
+- Space: `O(n)` scratch buffer (allocated once), plus `O(log n)` recursion depth
+- Stable: equal elements keep their original order
+'''
+
+[[hints]]
+text = '''
+Split the slice in half (`split_at_mut`), sort each half recursively, then
+merge the two sorted halves. Slices of length 0 or 1 are already sorted.
+'''
+
+[[hints]]
+text = '''
+To merge in place you need somewhere to park one half. Move the *left* half
+into the scratch buffer, then fill the slice from the front: each output slot
+`k` is always at or before the next unread right-half element, so you never
+overwrite something you still need.
+'''
+
+[[hints]]
+text = '''
+Stability lives in one comparison: when the two front elements are equal, take
+the one from the *left* run. With a comparator, take the right one only when
+`compare(right, left) == Ordering::Less`. `mem::swap` and `swap_with_slice`
+move elements without cloning them.
+'''

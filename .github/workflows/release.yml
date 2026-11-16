@@ -1,0 +1,265 @@
+name: Release
+
+# Push a `vX.Y.Z` tag (see CONTRIBUTING.md, "Releasing"). Nothing is public
+# until every binary has built: the GitHub Release stays a draft until the
+# crate is on crates.io, and the Homebrew tap is updated last.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  check:
+    name: Check version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Tag matches Cargo.toml and CHANGELOG.md
+        id: version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          if [ "v$version" != "$TAG" ]; then
+            echo "::error::Tag $TAG does not match Cargo.toml version $version"
+            exit 1
+          fi
+          if ! grep -q "^## \[$version\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section for $version"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  create-release:
+    name: Create draft release
+    needs: [ci, check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: taiki-e/create-gh-release-action@045e5c0ed9c50cc1f96de7e891a09ad3daea245f # v1.12.0
+        with:
+          changelog: CHANGELOG.md
+          draft: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Attach the Windows install script
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: gh release upload "$TAG" install.ps1 --repo "$GITHUB_REPOSITORY"
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          # Native runners for each architecture, so no cross toolchain is
+          # needed; Rust bundles musl, making the binaries fully static.
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: aarch64-pc-windows-msvc
+            os: windows-11-arm
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+      # So the binary runs without the Visual C++ Redistributable. (Your code
+      # is compiled by your own rustc, which needs the MSVC tools anyway.)
+      - name: Link the C runtime statically on Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "RUSTFLAGS=-C target-feature=+crt-static" >> "$GITHUB_ENV"
+      - uses: taiki-e/upload-rust-binary-action@f0d45ae91ee7b8ee928de7a9d04d893a08bcbec6 # v1.30.2
+        id: upload
+        with:
+          bin: gauntlet
+          target: ${{ matrix.target }}
+          archive: $bin-$target
+          include: LICENSE-APACHE,LICENSE-MIT,README.md
+          checksum: sha256
+          profile: dist
+          # Every target builds on a runner of its own architecture, so plain
+          # cargo works. The default picks `cross` for some targets, and cross
+          # assumes an x86_64 host.
+          build-tool: cargo
+          locked: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: ${{ steps.upload.outputs.tar || steps.upload.outputs.zip }}
+
+  publish-crate:
+    name: Publish to crates.io
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+      # The first version is published by hand (trusted publishing needs the
+      # crate to exist), and a re-run must not fail on a version that is
+      # already up.
+      - name: Is this version already published?
+        id: published
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' \
+            -A "gauntlet-release (https://github.com/$GITHUB_REPOSITORY)" \
+            "https://crates.io/api/v1/crates/gauntlet/$VERSION")
+          echo "published=$([ "$status" = 200 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
+        if: steps.published.outputs.published == 'false'
+        id: auth
+      - if: steps.published.outputs.published == 'false'
+        run: cargo publish --locked
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+
+  publish-release:
+    name: Publish release
+    needs: publish-crate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"
+
+  homebrew:
+    name: Update Homebrew tap
+    needs: [check, publish-release]
+    # Prereleases (v1.2.0-rc.1) stay off Homebrew.
+    if: ${{ !contains(github.ref_name, '-') }}
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Write the formula
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          mkdir checksums
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.sha256' --dir checksums
+          .github/scripts/homebrew-formula.sh "$VERSION" checksums > gauntlet.rb
+          cat gauntlet.rb
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: BenjaminLucier/homebrew-tap
+          path: tap
+          ssh-key: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
+          persist-credentials: true # zizmor: ignore[artipacked] the next step pushes; nothing is uploaded
+      - name: Commit and push
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        working-directory: tap
+        run: |
+          mkdir -p Formula
+          mv ../gauntlet.rb Formula/gauntlet.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/gauntlet.rb
+          if git diff --cached --quiet; then
+            echo "Formula already up to date"
+            exit 0
+          fi
+          git commit -m "gauntlet $VERSION"
+          git push
+
+  # Install the published release the way users do, and run it: `check` over
+  # a section compiles and tests the embedded problems with the runner image's
+  # Rust toolchain, the same way a player's code is.
+  smoke-test:
+    name: Install (${{ matrix.name }})
+    needs: [check, homebrew]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Homebrew macOS
+            os: macos-latest
+          - name: Homebrew Linux
+            os: ubuntu-latest
+          - name: Windows script
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
+    permissions: {}
+    steps:
+      - if: runner.os != 'Windows'
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || brew shellenv)"
+          brew install BenjaminLucier/tap/gauntlet
+          gauntlet --version | grep -F "$VERSION"
+          gauntlet check two_pointers
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+          REPO: ${{ github.repository }}
+        run: |
+          $env:GAUNTLET_VERSION = $env:VERSION
+          irm "https://github.com/$env:REPO/releases/download/v$env:VERSION/install.ps1" | iex
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\gauntlet\gauntlet.exe'
+          $out = & $exe --version
+          if ($out -notmatch [regex]::Escape($env:VERSION)) { throw "unexpected version: $out" }
+          & $exe check two_pointers
+          if ($LASTEXITCODE -ne 0) { throw "gauntlet check failed with exit code $LASTEXITCODE" }

@@ -1,0 +1,25 @@
+title = "mem::take, replace and swap"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the function it's after, then look it up
+in [`std::mem`](https://doc.rust-lang.org/std/mem/index.html) or on the
+`Option`, `Vec` and slice pages.
+'''
+
+[[hints]]
+text = '''
+You can't move a value out of a `&mut` — but you can *exchange* it for another
+one. `mem::take` leaves `Default::default()` behind, `mem::replace` leaves the
+value you give it, and `mem::swap` exchanges two places.
+'''
+
+[[hints]]
+text = '''
+For `Client::handle`, take ownership of the old state first (leaving the
+cheap `Idle` default in its place), then decide the new state from the old
+one and the event together. Because you *own* the old state, its `String`
+fields can move straight into the new one. Don't forget the transitions that
+change nothing: the state you took out has to go back.
+'''

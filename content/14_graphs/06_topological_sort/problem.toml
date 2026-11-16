@@ -1,0 +1,33 @@
+title = "Topological Sort"
+difficulty = "medium"
+
+complexity = '''
+- `topo_sort_kahn`: `O(V log V + E)` — the heap makes it pick the smallest ready vertex
+- `topo_sort_dfs`: `O(V + E)`
+- Space: `O(V + E)` for the adjacency lists, plus `O(V)` for in-degrees, colours and the stack
+- Extracting a cycle after a failure: `O(V + E)`
+'''
+
+[[hints]]
+text = '''
+Kahn: count each vertex's in-degree. Vertices with in-degree 0 are "ready".
+Repeatedly take the smallest ready vertex (a `BinaryHeap<Reverse<usize>>`),
+output it, and decrement its out-neighbors' in-degrees, adding any that hit 0.
+If fewer than `n` vertices come out, the rest can't be ordered.
+'''
+
+[[hints]]
+text = '''
+DFS: colour vertices white (unseen), grey (on the current DFS path) and black
+(finished). Output a vertex when it turns black, then reverse the whole list.
+An edge into a *grey* vertex closes a cycle — and the grey vertices, in stack
+order from that vertex to the current one, *are* the cycle.
+'''
+
+[[hints]]
+text = '''
+After Kahn gets stuck, every leftover vertex still has an incoming edge from
+another leftover vertex. Pick any leftover vertex and keep stepping to such a
+predecessor: you must revisit a vertex within `n` steps, and the loop you went
+round (reversed, since you walked edges backwards) is a cycle.
+'''

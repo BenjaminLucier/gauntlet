@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a change to the app, a statistic, a command, or a problem to swap in.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The gauntlet is a fixed 128 problems, so a new problem means retiring
+        one: if you are suggesting a problem, please say which it would replace.
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the feature and how you would use it.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What it would help you practise or see, or what is awkward today.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other ways you have considered, or how other tools handle it.

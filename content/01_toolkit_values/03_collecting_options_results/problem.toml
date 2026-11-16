@@ -1,0 +1,29 @@
+title = "Collecting Options and Results"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+`Result<V, E>` implements `FromIterator<Result<T, E>>` whenever `V`
+implements `FromIterator<T>` — so `.collect::<Result<Vec<_>, _>>()`,
+`.collect::<Result<BTreeSet<_>, _>>()` and `.collect::<Option<String>>()` all
+work, and they stop at the first `Err` / `None`. `Sum` and `Product` work the
+same way.
+'''
+
+[[hints]]
+text = '''
+`Option` and `Result` are iterators of zero or one item, so `flatten()` over an
+iterator of them keeps only the `Some` / `Ok` values. `filter_map` and
+`find_map` take a closure returning an `Option`.
+'''
+
+[[hints]]
+text = '''
+`try_fold` is `fold` with an escape hatch: the closure returns an `Option`, a
+`Result` or a `ControlFlow`, and the first `None` / `Err` / `Break` ends the
+fold. When both variants of a `ControlFlow` carry the same type, one `match`
+arm with an or-pattern gets the value out. `try_for_each` is the
+same with no accumulator. To get both the good and the bad values, `partition`
+on `Result::is_ok`, then `flatten` one side and `filter_map(Result::err)` the
+other.
+'''

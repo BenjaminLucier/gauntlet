@@ -1,0 +1,29 @@
+title = "Longest Palindromic Substring"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n^2)`
+- Space: `O(n)` for a table of `char`s and their byte offsets (`O(1)` is
+  possible if you only handle ASCII)
+
+(Manacher's algorithm does it in `O(n)`, but `O(n^2)` is the expected answer.)
+'''
+
+[[hints]]
+text = '''
+Checking all `O(n^2)` substrings with an `O(n)` palindrome test is `O(n^3)`.
+To get to `O(n^2)`, think about where a palindrome's **center** is.
+'''
+
+[[hints]]
+text = '''
+There are `2n - 1` centers: each character (odd length) and each gap between
+two characters (even length). Expand outward from each center while the ends
+match, and remember the widest span you found.
+'''
+
+[[hints]]
+text = '''
+Do the expansion in `char` positions, and convert the winning range to byte
+offsets only at the end, to slice `s`.
+'''

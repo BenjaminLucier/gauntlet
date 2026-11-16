@@ -1,0 +1,19 @@
+title = "Validate Binary Search Tree"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(h)`
+'''
+
+[[hints]]
+text = '''
+Comparing each node only with its children is not enough (the third
+example). Each node must fit inside an open interval `(low, high)` inherited
+from all of its ancestors.
+'''
+
+[[hints]]
+text = '''
+Alternatively, an inorder traversal of a valid BST is strictly increasing.
+'''

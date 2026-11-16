@@ -1,0 +1,28 @@
+title = "Implementing Iterators"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+An iterator is a struct holding "where am I" plus one method,
+`fn next(&mut self) -> Option<Self::Item>`. Every other `Iterator` method
+(`map`, `rev`, `collect`, …) comes for free. For a slice-walking iterator,
+store the slice itself (`&'a [T]`) and shrink it, or store an index.
+'''
+
+[[hints]]
+text = '''
+`Countdown` needs a cursor for each end, and stops when they meet; how many
+values lie between the two cursors is all `size_hint` needs. `Fibonacci` can
+keep its upcoming values as `Option`s, so "the next value overflowed" is just
+`None`. For `ChunksOf`, think about how many chunks the remaining slice still
+holds when the last one may be short.
+'''
+
+[[hints]]
+text = '''
+`Dedup` keeps a `Peekable` of its input: after taking one item, keep
+swallowing neighbours that are equal to it (look at the `Peekable` methods
+that take only when a condition holds). For `Stack`, the iterator types in the
+signature tell you what to build: the backing `Vec`'s own iterators, reversed.
+`FromIterator` and `Extend` can lean on `Vec`'s implementations.
+'''

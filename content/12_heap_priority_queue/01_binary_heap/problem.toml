@@ -1,0 +1,33 @@
+title = "Binary Heap"
+difficulty = "medium"
+
+complexity = '''
+- `push`, `pop`: `O(log n)`; `peek`, `len`, `is_empty`: `O(1)`
+- `From<Vec<T>>`: `O(n)` (bottom-up heapify); `FromIterator`: `O(n)` the same way
+- `iter`: `O(1)` per item; `into_vec`: `O(1)` (hands back the buffer)
+- `extend` with `k` items: `O(k log(n + k))`
+- Space: `O(n)`, a single `Vec`
+'''
+
+[[hints]]
+text = '''
+Store the tree in a `Vec`, level by level: the children of index `i` are
+`2i + 1` and `2i + 2`, its parent is `(i - 1) / 2`. The heap property: every
+parent is `>=` its children, so the maximum sits at index 0.
+'''
+
+[[hints]]
+text = '''
+Two helpers do all the work. `sift_up(i)`: while `i` beats its parent, swap
+them. `sift_down(i, end)`: while one of `i`'s children (below `end`) beats it,
+swap with the *larger* child. `push` = append + sift up; `pop` = swap the root
+with the last item, `Vec::pop` it, sift the new root down.
+'''
+
+[[hints]]
+text = '''
+O(n) heapify: sift down every internal node, from the last parent
+(`len / 2 - 1`) back to the root. Most nodes are near the bottom and sift only
+a step or two, which sums to `O(n)`. `iter` and `into_vec` need no heap logic
+at all: they expose the `Vec` as it is.
+'''

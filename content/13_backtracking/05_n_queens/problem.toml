@@ -1,0 +1,25 @@
+title = "N-Queens"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n!)` — the search tree is bounded by the number of column orders
+- Space: `O(n)` besides the output
+'''
+
+[[hints]]
+text = '''
+Exactly one queen goes in each row. Recurse row by row, trying each column for
+the current row's queen.
+'''
+
+[[hints]]
+text = '''
+Track attacked lines in three boolean arrays: columns `c`, "down" diagonals
+`r + n - 1 - c`, and "up" diagonals `r + c`. A square is free when none of its
+three lines is used — an `O(1)` check.
+'''
+
+[[hints]]
+text = '''
+Remember to clear the three flags when you backtrack out of a square.
+'''

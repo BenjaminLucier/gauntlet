@@ -1,0 +1,37 @@
+title = "Trie"
+difficulty = "medium"
+
+complexity = '''
+- `insert`, `contains`, `starts_with`, `remove`, `count_with_prefix`: `O(L log σ)`
+  where `L` is the length of the argument in chars and `σ` the number of
+  distinct children at a node (`O(L)` expected with a `HashMap`)
+- `words_with_prefix`: `O(L + size of the subtree below the prefix)`
+- `longest_common_prefix`: `O(length of the answer)`; `len`: `O(1)`
+- `node_count`: `O(number of nodes)` for a walk (or `O(1)` if you keep a
+  running total)
+- `from_iter` / `extend`: one `insert` per word
+- Space: `O(total chars of the stored words)`, shared prefixes stored once
+'''
+
+[[hints]]
+text = '''
+Each node maps a `char` to a child node and has a flag for "a word ends
+here". `contains`, `starts_with` and `count_with_prefix` all start by walking
+the same path; write that walk once.
+'''
+
+[[hints]]
+text = '''
+Store in every node how many words pass through it (or end at it). Then
+`count_with_prefix` is a lookup, `len` is the root's count, and `remove` knows
+a child is about to become empty when its count is 1 — that's the branch to
+cut off.
+'''
+
+[[hints]]
+text = '''
+With a `BTreeMap<char, Node>`, a depth-first walk visits children in `char`
+order, and code-point order is exactly the order `String`'s `Ord` uses. Push
+each char onto one shared `String` on the way down and `pop` it on the way
+back up.
+'''

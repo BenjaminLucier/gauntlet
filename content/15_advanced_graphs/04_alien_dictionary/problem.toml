@@ -1,0 +1,27 @@
+title = "Alien Dictionary"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(C)` where `C` is the total number of characters
+- Space: `O(1)` extra (at most 26 letters and 26² edges)
+'''
+
+[[hints]]
+text = '''
+Only **adjacent** words matter. For each pair, the first position where they
+differ gives one ordering constraint `a < b`; everything after it tells you
+nothing.
+'''
+
+[[hints]]
+text = '''
+If there's no differing position and the first word is longer, the input is
+invalid. Then topologically sort the letters (Kahn's algorithm or DFS with
+three colours); a cycle means `None`.
+'''
+
+[[hints]]
+text = '''
+Don't forget letters that never appear in a constraint — they still belong in
+the output, anywhere.
+'''

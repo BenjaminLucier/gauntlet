@@ -1,0 +1,23 @@
+title = "Longest Increasing Subsequence"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)`
+- Space: `O(n)`
+
+(The `O(n^2)` DP is a fine first step, but it makes far too many comparisons
+for the tests.)
+'''
+
+[[hints]]
+text = '''
+`O(n^2)`: let `lis[i]` be the length of the longest increasing subsequence
+ending at index `i`; it is `1 + max(lis[j])` over `j < i` with `items[j] < items[i]`.
+'''
+
+[[hints]]
+text = '''
+`O(n log n)`: keep `tails[k]` = the smallest possible last item of an
+increasing subsequence of length `k + 1`. `tails` stays sorted, so each new
+item either extends it or replaces the first element `>=` itself.
+'''

@@ -1,0 +1,24 @@
+title = "Rotting Oranges"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(m * n)`
+'''
+
+[[hints]]
+text = '''
+All rotten oranges spread at the same time — put every one of them into a BFS
+queue at the start (multi-source BFS).
+'''
+
+[[hints]]
+text = '''
+Process the queue level by level; each level is one minute. Count fresh oranges
+up front and decrement as they rot — if any remain at the end, it's `None`.
+'''
+
+[[hints]]
+text = '''
+Careful with the off-by-one: the last level rots nothing new, so don't count it.
+'''

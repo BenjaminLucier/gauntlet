@@ -1,0 +1,20 @@
+title = "Coin Change"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(amount * coins.len())`
+- Space: `O(amount)`
+'''
+
+[[hints]]
+text = '''
+Greedily taking the largest coin first is wrong: with coins `[1, 3, 4]` and
+amount `6`, greedy uses `4 + 1 + 1` but `3 + 3` is better.
+'''
+
+[[hints]]
+text = '''
+Let `best[a]` be the fewest coins summing to `a`, with `best[0] = 0`. Then
+`best[a] = 1 + min(best[a - c])` over coins `c <= a` whose remainder is
+reachable.
+'''

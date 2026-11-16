@@ -1,0 +1,23 @@
+title = "Option Combinators"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after, then look it up on
+the `Option` page: <https://doc.rust-lang.org/std/option/enum.Option.html>.
+The method list in the sidebar is grouped the same way as these drills.
+'''
+
+[[hints]]
+text = '''
+`map` transforms the value inside; `and_then` is for closures that return an
+`Option` themselves; `filter` keeps the value only if a predicate holds;
+`ok_or` and `transpose` move between `Option` and `Result`.
+'''
+
+[[hints]]
+text = '''
+The `&mut Option<T>` drills (`take`, `replace`, `get_or_insert_with`) are the
+ones you'll use most in data structures: they move values in and out of a slot
+without fighting the borrow checker.
+'''

@@ -1,0 +1,25 @@
+title = "Consumers and Folds"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after, then look it up on
+the `Iterator` page: <https://doc.rust-lang.org/std/iter/trait.Iterator.html>.
+Consumers are the methods that return something other than an iterator.
+'''
+
+[[hints]]
+text = '''
+`min_by_key` returns the *first* of several equal minimums, `max_by_key` the
+*last* of several equal maximums. Two iterators can be compared directly,
+item by item, the way two slices can.
+'''
+
+[[hints]]
+text = '''
+`fold` can carry any accumulator, including a tuple like `(lo, hi)`. For
+`nest`, start the fold from the last name and wrap outwards: `split_last`
+separates the starting value from the rest. `unzip` and `partition` fill two
+collections at once, and the collections can be any `Default + Extend` type,
+a `String` included.
+'''

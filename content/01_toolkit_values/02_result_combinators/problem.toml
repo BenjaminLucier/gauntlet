@@ -1,0 +1,25 @@
+title = "Result Combinators"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after, then look it up on
+the `Result` page: <https://doc.rust-lang.org/std/result/enum.Result.html>.
+Most of them mirror the `Option` methods you already know.
+'''
+
+[[hints]]
+text = '''
+`map` touches the `Ok` value, `map_err` the `Err` value. `and_then` chains a
+step that can fail; `or_else` gets a second chance after a failure. `ok()` and
+`err()` throw one side away and give you an `Option`.
+'''
+
+[[hints]]
+text = '''
+`?` calls `From::from` on the error before returning it, so a
+`ParseIntError` turns into a `ConfigError` on its own once
+`impl From<ParseIntError> for ConfigError` exists. For errors that have no
+`From` impl (an `Option` that is `None`, a range check), build the error
+yourself with `ok_or` or an early `return Err(...)`.
+'''

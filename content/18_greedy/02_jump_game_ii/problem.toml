@@ -1,0 +1,26 @@
+title = "Jump Game II"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Think of it as BFS over indices: "level k" is the set of indices reachable in
+exactly `k` jumps. Each level is a contiguous range.
+'''
+
+[[hints]]
+text = '''
+Scan the current range `[l, r]`, compute the farthest index reachable from it;
+the next range is `[r + 1, farthest]`. Count how many ranges you pass through.
+If the next range would be empty, you're stuck.
+'''
+
+[[hints]]
+text = '''
+Jumping to the cell with the largest *value* is a different (and wrong) greedy
+— maximize `i + jumps[i]`, not `jumps[i]`.
+'''

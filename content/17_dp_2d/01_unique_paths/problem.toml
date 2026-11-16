@@ -1,0 +1,27 @@
+title = "Unique Paths"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(rows * cols)`
+- Space: `O(cols)` (a single row)
+'''
+
+[[hints]]
+text = '''
+The only ways into cell `(r, c)` are from `(r - 1, c)` and `(r, c - 1)`, so
+`paths(r, c) = paths(r - 1, c) + paths(r, c - 1)`. Cells in the first row or
+first column have exactly one path.
+'''
+
+[[hints]]
+text = '''
+You only ever look at the row above, so a single `Vec` of length `cols`
+updated left to right is enough — each new row is a running sum of the old one.
+'''
+
+[[hints]]
+text = '''
+There is also a closed form: choose which `rows - 1` of the `rows + cols - 2`
+moves are "down". If you compute the binomial coefficient, watch out for
+overflow in the intermediate products.
+'''

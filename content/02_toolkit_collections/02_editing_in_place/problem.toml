@@ -1,0 +1,28 @@
+title = "Editing in Place"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after. The `Vec` methods
+(`retain`, `drain`, `split_off`, `insert`, …) are on
+<https://doc.rust-lang.org/std/vec/struct.Vec.html>; the ones that don't change
+the length (`rotate_left`, `fill`, `sort_by`, …) are slice methods on
+<https://doc.rust-lang.org/std/primitive.slice.html>.
+'''
+
+[[hints]]
+text = '''
+`retain` and `retain_mut` keep the elements whose closure returns `true` —
+`retain_mut` lets the closure modify each element on the way. `drain(range)`
+and `extract_if(.., pred)` return iterators of the removed elements: `collect()`
+them. `dedup` only merges *neighbours*.
+'''
+
+[[hints]]
+text = '''
+For `rotate`, reduce `k` modulo the length first (`rotate_right` panics if the
+count exceeds it), and watch out for the empty slice. For sorting with a
+tie-breaker, `a.cmp(&b).then_with(|| ...)` chains comparisons; `b.cmp(&a)`
+flips the order. A tuple key `(primary, secondary)` does the same for
+`sort_by_key`.
+'''

@@ -1,0 +1,29 @@
+title = "Dynamic Array"
+difficulty = "medium"
+
+complexity = '''
+- `push`: amortized `O(1)`; `pop`, `get`, indexing: `O(1)`
+- `insert` / `remove` at index `i`: `O(len - i)`
+- Space: `O(capacity)`, with `capacity < 4 * len` once the array has grown (see Constraints)
+'''
+
+[[hints]]
+text = '''
+Keep a fixed-size buffer and a separate `len`. Slots past `len` are `None`;
+slots before it are `Some`. When the buffer is full, allocate a bigger one and
+move every element across.
+'''
+
+[[hints]]
+text = '''
+Growing by a constant (say +1 or +16) makes `n` pushes cost `O(n^2)`. Growing
+by a *factor* (double it) makes the total copying `O(n)` — that's what
+"amortized O(1)" means.
+'''
+
+[[hints]]
+text = '''
+`Option::take` moves a value out of a slot and leaves `None` behind — that's
+how you get an owned `T` out of a `Box<[Option<T>]>` without `Clone`. For the
+iterator, keep a slice of the live slots and walk it.
+'''

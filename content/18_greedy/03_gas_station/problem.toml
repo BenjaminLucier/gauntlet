@@ -1,0 +1,19 @@
+title = "Gas Station"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+If `sum(gas) < sum(cost)` no start can work. Otherwise, some start does.
+'''
+
+[[hints]]
+text = '''
+If you start at `s` and first run dry trying to reach station `j`, then no
+station between `s` and `j` can be a valid start either — so jump straight to
+`j + 1` and reset the tank. One pass suffices.
+'''

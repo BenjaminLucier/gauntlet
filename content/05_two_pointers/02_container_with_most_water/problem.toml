@@ -1,0 +1,18 @@
+title = "Container With Most Water"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Start with the widest container: one index at each end.
+'''
+
+[[hints]]
+text = '''
+The shorter line limits the water. Moving the *taller* line inward can only
+shrink the width without raising the limit — so always move the shorter one.
+'''

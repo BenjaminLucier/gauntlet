@@ -1,0 +1,26 @@
+title = "Ordering and Hashing"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+When `#[derive]` gives the wrong answer, write the impls by hand from a single
+normalized view of the value: the lower-cased bytes, the parts without trailing
+zeros, the `total_cmp` of the float. If `eq`, `cmp` and `hash` all look at the
+same view, they can't disagree. See
+<https://doc.rust-lang.org/std/cmp/trait.Ord.html>.
+'''
+
+[[hints]]
+text = '''
+Chain keys with `a.cmp(&b).then(..)` or `.then_with(|| ..)`. For a descending
+key, use `.reverse()` or simply swap the operands: `other.score.cmp(&self.score)`.
+In `sort_by_key` and `min_by_key`, wrap the key in `Reverse(..)`.
+'''
+
+[[hints]]
+text = '''
+`max_by_key` returns the *last* of several equal maxima, `min_by_key` the
+*first* of several equal minima — so `min_by_key(|w| Reverse(w.len()))` is
+"first longest". The free functions `std::cmp::min_by_key` / `max_by_key`
+compare just two values and have the same tie rules.
+'''

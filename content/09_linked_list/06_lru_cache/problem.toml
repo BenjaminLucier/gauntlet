@@ -1,0 +1,21 @@
+title = "LRU Cache"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(1)` average per `get` / `put`
+- Space: `O(capacity)`
+'''
+
+[[hints]]
+text = '''
+A `HashMap` gives `O(1)` lookup but no order. A doubly linked list gives `O(1)`
+"move to front" and "remove from back" but no lookup. Combine them: the map
+stores, for each key, where its entry lives in the list.
+'''
+
+[[hints]]
+text = '''
+Store the list's entries in a `Vec` with `prev`/`next` indices, and keep the
+indices of the most and least recently used entries. Write two small helpers —
+`unlink(i)` and `push_front(i)` — and everything else is built from them.
+'''

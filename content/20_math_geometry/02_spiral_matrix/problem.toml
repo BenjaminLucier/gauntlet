@@ -1,0 +1,20 @@
+title = "Spiral Matrix"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(1)` extra (besides the output)
+'''
+
+[[hints]]
+text = '''
+Keep four boundaries: `top`, `bottom`, `left`, `right`. Walk one side, then
+shrink the corresponding boundary.
+'''
+
+[[hints]]
+text = '''
+When only a single row or a single column remains, the "walk back" steps would
+visit the same cells twice. Re-check that rows and columns remain before
+walking the bottom row and the left column.
+'''

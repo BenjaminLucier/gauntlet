@@ -1,0 +1,20 @@
+title = "Reverse Integer"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(log10 |x|)` (at most 10 digits)
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Pop digits with `x % 10` and `x /= 10`; push them with `r = r * 10 + digit`.
+'''
+
+[[hints]]
+text = '''
+Check for overflow **while** pushing, not after: once `r * 10 + digit` has
+overflowed, the information is gone. Either compare `r` against
+`i32::MAX / 10` and `i32::MIN / 10` before multiplying, or let the checked
+arithmetic do it for you.
+'''

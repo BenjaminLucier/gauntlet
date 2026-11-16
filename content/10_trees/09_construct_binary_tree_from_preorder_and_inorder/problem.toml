@@ -1,0 +1,28 @@
+title = "Construct Binary Tree from Preorder and Inorder Traversal"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` expected
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+`preorder[0]` is the root. Find it in `inorder`: everything to its left is
+the left subtree, everything to its right is the right subtree — and that
+tells you how many preorder entries belong to the left subtree.
+'''
+
+[[hints]]
+text = '''
+Searching `inorder` each time is `O(n)` per node (`O(n^2)` on a skewed tree).
+Precompute a `HashMap` from value to inorder index, and walk `preorder` with a
+single shared cursor while recursing on inorder index ranges.
+'''
+
+[[hints]]
+text = '''
+When the input is consistent, each root you take from `preorder` lands inside
+the inorder range you're currently building. If it doesn't — or isn't in
+`inorder` at all — no tree has both traversals.
+'''

@@ -1,0 +1,29 @@
+title = "Task Scheduler"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m)` where `m = tasks.len()` (count + a formula), or
+  `O(m log σ)` simulating with a max-heap over the `σ` distinct labels
+- Space: `O(1)` (one fixed table of 256 counters)
+'''
+
+[[hints]]
+text = '''
+Only the counts per label matter. Greedily running the available task with
+the most remaining copies is optimal — simulate it with a max-heap of counts
+and a queue of tasks cooling down.
+'''
+
+[[hints]]
+text = '''
+Or count directly: with `max` = highest frequency and `ties` = number of
+labels having that frequency, the most frequent tasks form `max - 1` frames of
+length `cooldown + 1`, plus a final frame of `ties`.
+'''
+
+[[hints]]
+text = '''
+That formula can come out **smaller** than the number of tasks (when there's
+lots of variety, no idling is needed). The answer can never be less than
+`tasks.len()`.
+'''

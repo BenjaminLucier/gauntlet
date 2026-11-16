@@ -1,0 +1,25 @@
+title = "Integer Overflow"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+Each doc comment names the method it's after. They're all inherent methods on
+the integer types: see <https://doc.rust-lang.org/std/primitive.i32.html> and
+<https://doc.rust-lang.org/std/primitive.u64.html>.
+'''
+
+[[hints]]
+text = '''
+The four families answer "what happens on overflow?" differently: `checked_*`
+returns `Option`, `wrapping_*` wraps modulo 2ⁿ, `saturating_*` clamps to
+`MIN`/`MAX`, `overflowing_*` returns `(wrapped, did_overflow)`. For a whole
+slice, `try_fold` with a `checked_*` method stops at the first `None`.
+'''
+
+[[hints]]
+text = '''
+The asymmetric range of signed integers is the source of most traps:
+`i32::MIN` has no positive counterpart, so `abs`, `-x` and `MIN / -1` all
+overflow. `unsigned_abs` and `abs_diff` sidestep it by returning the unsigned
+type. `ilog2`/`ilog10` panic on 0; their `checked_` versions don't.
+'''

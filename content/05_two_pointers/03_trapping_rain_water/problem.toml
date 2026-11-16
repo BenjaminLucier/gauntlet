@@ -1,0 +1,20 @@
+title = "Trapping Rain Water"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Precomputing the running maximum from the left and from the right gives an
+`O(n)` time, `O(n)` space solution.
+'''
+
+[[hints]]
+text = '''
+Use two indices with running `left_max` and `right_max`. If
+`left_max < right_max`, the water at the left index is decided by `left_max`
+alone — whatever lies between, the right side is at least as tall.
+'''

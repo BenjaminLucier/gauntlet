@@ -1,0 +1,20 @@
+title = "Binary Tree Right Side View"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(n)` (BFS queue) or `O(h)` (DFS)
+'''
+
+[[hints]]
+text = '''
+Following right children from the root is wrong whenever the left side is
+deeper (the second example).
+'''
+
+[[hints]]
+text = '''
+Level-order BFS and keep the last node of each level. Or DFS visiting the
+right child first, recording a node when its depth equals the number of
+values recorded so far.
+'''

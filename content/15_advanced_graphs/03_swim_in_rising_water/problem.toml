@@ -1,0 +1,26 @@
+title = "Swim in Rising Water"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n² log n)`
+- Space: `O(n²)`
+'''
+
+[[hints]]
+text = '''
+The cost of a path is the **maximum** elevation on it; you want the path that
+minimises that maximum.
+'''
+
+[[hints]]
+text = '''
+Dijkstra still works when "distance" is `max(dist[u], grid[v])` instead of a
+sum: always expand the reachable cell with the lowest elevation using a
+min-heap; the answer is the largest elevation popped before reaching the target.
+'''
+
+[[hints]]
+text = '''
+Alternatives: binary search on `t` with a flood fill per guess, or add cells to a
+union-find in increasing elevation until the two corners join.
+'''

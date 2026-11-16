@@ -1,0 +1,26 @@
+title = "Sliding Window Maximum"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(k)` besides the output
+'''
+
+[[hints]]
+text = '''
+Recomputing each window's max is `O(n * k)`. A `BinaryHeap` with lazy
+deletion gets `O(n log n)`.
+'''
+
+[[hints]]
+text = '''
+Keep a `VecDeque` of **indices** whose values are strictly decreasing from
+front to back. Before pushing index `i`, pop from the back every index whose
+value is `<= nums[i]` — they can never be a maximum again.
+'''
+
+[[hints]]
+text = '''
+Pop the front when it falls out of the window (`i - front >= k`). The front
+is then the current window's maximum.
+'''

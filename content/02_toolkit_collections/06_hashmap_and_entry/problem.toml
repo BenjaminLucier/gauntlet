@@ -1,0 +1,24 @@
+title = "HashMap and Entry"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Each doc comment names the method it's after. Look it up on
+<https://doc.rust-lang.org/std/collections/struct.HashMap.html> and
+<https://doc.rust-lang.org/std/collections/hash_map/enum.Entry.html>.
+'''
+
+[[hints]]
+text = '''
+`map.entry(key)` hashes the key once and gives you a slot. `or_insert(v)`,
+`or_default()` and `or_insert_with(f)` all return `&mut V` — something you can
+`+=` through or `push` onto. When a hit and a miss need different code,
+`match` on the `Entry` itself.
+'''
+
+[[hints]]
+text = '''
+`entry` needs an owned key (`String`), but `get`, `get_mut`, `remove` and
+`contains_key` accept any `&Q` the key type borrows as — so a `&str` works on a
+`HashMap<String, _>`. For sorted output, collect into a `Vec` and sort it.
+'''
