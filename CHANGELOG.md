@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-The first release, to be published as 0.1.0.
+## [0.1.0] - 2026-11-16
+
+The first release.
 
 ### Added
 
@@ -50,3 +52,6 @@ The first release, to be published as 0.1.0.
 - macOS, Linux and Windows. Installs with Homebrew, a PowerShell script on
   Windows, `cargo install` or `cargo binstall`, or from the archives on
   GitHub Releases.
+
+[Unreleased]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/BenjaminLucier/gauntlet/releases/tag/v0.1.0
