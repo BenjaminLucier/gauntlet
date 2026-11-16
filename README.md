@@ -16,6 +16,8 @@ pass, the problem is solved and you say how trivial it felt. When you've
 solved enough, `gauntlet run` puts you through a timed run and keeps your
 personal bests.
 
+![Reading a problem, saving a buggy solution and then a right one, rating it, and the statistics](https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/demo.gif)
+
 ## What's in it
 
 - **128 problems in 22 sections**, one after the other:
@@ -101,6 +103,11 @@ The header shows its working file,
 *Not started*: every body is still `todo!()`. Press `i` for the statement,
 `t` for the tests, `h` for hints.
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/latte/info.png">
+  <img alt="The Info page of Invert Binary Tree: the statement and signature, with the first hint revealed" src="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/mocha/info.png">
+</picture>
+
 Open the data directory, `~/.local/share/gauntlet` (`%APPDATA%\gauntlet`),
 in your editor, then that file. It holds only your code; the tests are attached when gauntlet compiles
 it. Gauntlet keeps a `rust-project.json` there, so rust-analyzer works in
@@ -112,6 +119,11 @@ above the real failures. When every test passes, the problem is solved and
 you rate it, and the Arena shows how long the tests took and their peak
 memory (see [Runtime and memory](#runtime-and-memory)). `u` goes to the next unsolved problem, `n` and `p` move through
 the list, and `?` shows every key.
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/latte/arena.png">
+  <img alt="The Arena after a pass: 19 tests passed, with their runtime and memory against the reference solution's" src="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/mocha/arena.png">
+</picture>
 
 ## Completionist mode
 
@@ -130,6 +142,11 @@ It's required: an unanswered solve is asked again on the next start. Press
 `x` to redo a problem from a fresh template (your old file is overwritten);
 passing it again is a new solve. Every solve is kept in the problem's
 history, so you can watch a 1 turn into a 5.
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/latte/problem.png">
+  <img alt="A problem's Stats page: four solves, two of them in runs, rated 2 and then 4 after a redo, with its run times charted" src="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/mocha/problem.png">
+</picture>
 
 ## Review
 
@@ -191,6 +208,11 @@ for every section, and a run over just `graphs` is just as good a `graphs`
 PB. Your *sum of best* is each problem's fastest time, added up. Finishing a
 section in a run shows your split against its PB.
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/latte/runs.png">
+  <img alt="Runs and PBs: four finished runs over sections, and the PB and sum of best of each" src="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/mocha/runs.png">
+</picture>
+
 Solves in a run count towards completion too. The code you wrote in a run is
 kept until you `gauntlet run --clean` it; its times and PBs stay.
 
@@ -204,6 +226,11 @@ Each section has a page of its problems, which `o` orders least trivial
 first, and each problem a page of its solves and run times, with your best
 runtime and memory against the reference solution's. `▲` marks a problem
 off the reference's pace. `Enter` opens the selected problem in the Arena.
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/latte/stats.png">
+  <img alt="The Stats overview: progress and streak, ratings, suggested review and recent solves" src="https://raw.githubusercontent.com/BenjaminLucier/gauntlet/main/docs/images/mocha/stats.png">
+</picture>
 
 ## Commands
 
