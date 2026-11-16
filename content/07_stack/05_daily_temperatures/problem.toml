@@ -1,0 +1,25 @@
+title = "Daily Temperatures"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+The brute force scans forward from every day — `O(n^2)` when many days never
+get warmer. Can each day be "resolved" exactly once instead?
+'''
+
+[[hints]]
+text = '''
+Keep a stack of **indices** of days still waiting for a warmer day; their
+temperatures are non-increasing from bottom to top.
+'''
+
+[[hints]]
+text = '''
+When today is strictly warmer than the day on top of the stack, pop it and set
+its answer to `today - that_index`. Repeat, then push today.
+'''

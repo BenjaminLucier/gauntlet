@@ -1,0 +1,26 @@
+title = "Longest Increasing Path in a Matrix"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(rows * cols)` (or `O(rows * cols * log(rows * cols))` with sorting)
+- Space: `O(rows * cols)`
+'''
+
+[[hints]]
+text = '''
+Because the path must strictly increase, it can never revisit a cell — there
+are no cycles, so you don't need a `visited` set. The longest path starting at a
+cell depends only on that cell, so it can be cached.
+'''
+
+[[hints]]
+text = '''
+`best(r, c) = 1 + max(best(neighbour))` over neighbours with a larger value.
+Memoize it (DFS + memo) and take the maximum over all cells.
+'''
+
+[[hints]]
+text = '''
+Iterative alternative: process cells from largest value to smallest (sort them),
+or peel layers like a topological sort (Kahn's algorithm) — no recursion needed.
+'''

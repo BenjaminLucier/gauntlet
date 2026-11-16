@@ -1,0 +1,26 @@
+title = "VecDeque and BinaryHeap"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Each doc comment names the method it's after. Look it up on
+<https://doc.rust-lang.org/std/collections/struct.VecDeque.html> and
+<https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html>.
+'''
+
+[[hints]]
+text = '''
+`VecDeque` is a ring buffer: `rotate_left`/`rotate_right` panic if the count
+exceeds the length, so reduce it modulo `len()` (and guard the empty deque).
+Its storage may wrap around, which is why `as_slices` returns two slices and
+why sorting needs `make_contiguous()` first.
+'''
+
+[[hints]]
+text = '''
+`BinaryHeap` is a max-heap. Wrapping each item in `std::cmp::Reverse` flips
+the order, giving a min-heap. To take the top `k`, keep popping until you have
+`k` or the heap is empty — `std::iter::from_fn` turns a repeated `pop` into an
+iterator. Only `peek`, `pop` and `into_sorted_vec` see the heap's order;
+everything else (`iter`, `drain`, `into_vec`) is arbitrary.
+'''

@@ -1,0 +1,26 @@
+title = "Chars and UTF-8"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after. The `char` methods
+are on <https://doc.rust-lang.org/std/primitive.char.html>, the `str` ones on
+<https://doc.rust-lang.org/std/primitive.str.html>. A `String` is UTF-8 bytes:
+`len()` counts bytes, `chars()` walks characters.
+'''
+
+[[hints]]
+text = '''
+`char_indices()` yields `(byte_offset, char)`: the `n`-th item's offset is
+where the `n`-th character starts. For "the end of the string" there's no item,
+so treat `s.len()` as one extra offset. `s.get(a..b)` is the slicing that
+returns `None` instead of panicking.
+'''
+
+[[hints]]
+text = '''
+For `truncate_bytes`, `str` has a method that rounds a byte index *down* to
+the nearest character boundary, and copes with an index past the end. For
+`rot13`, `c as u8` is safe once you've matched `'a'..='z'`; do the arithmetic
+on `u8` and turn it back with `as char`.
+'''

@@ -1,0 +1,24 @@
+title = "3Sum"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n^2)`
+- Space: `O(n)` for the sorted copy, plus the output
+'''
+
+[[hints]]
+text = '''
+Sort first. Fix the smallest element `nums[i]`; the problem becomes "two sum
+on a sorted slice" for the rest, with target `-nums[i]`.
+'''
+
+[[hints]]
+text = '''
+To avoid duplicates, skip `i` when `nums[i] == nums[i - 1]`, and after finding
+a triplet move the left pointer past all copies of its value.
+'''
+
+[[hints]]
+text = '''
+Once `nums[i] > 0`, no triplet starting there can sum to zero — stop.
+'''

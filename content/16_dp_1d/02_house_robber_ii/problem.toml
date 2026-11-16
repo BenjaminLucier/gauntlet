@@ -1,0 +1,21 @@
+title = "House Robber II"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+The first and last house can't both be robbed. So either the first house is
+excluded, or the last one is (or both).
+'''
+
+[[hints]]
+text = '''
+Solve the problem for a straight row first (at each house: skip it, or take it
+plus the best up to two houses back). Run that on everything but the first house and on
+everything but the last, and take the larger. Watch out for a single house:
+both of those slices are empty, but the answer is that house.
+'''

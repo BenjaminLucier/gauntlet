@@ -1,0 +1,26 @@
+title = "Searching and Splitting"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after, then look it up on
+the slice page: <https://doc.rust-lang.org/std/primitive.slice.html>. Every
+method there works on a `Vec` too, through deref.
+'''
+
+[[hints]]
+text = '''
+Most of these return borrowed sub-slices: `windows`, `chunks`, `split` and
+friends are iterators of `&[T]` you can `collect()` straight into a
+`Vec<&[T]>`. `binary_search` returns `Err(i)` with the insertion point when the
+value is missing; `partition_point` gives the first index where a predicate
+turns false.
+'''
+
+[[hints]]
+text = '''
+Slice patterns go in a `match`: `[first, .., last]` needs at least two
+elements, `[x]` exactly one, `[]` none, and `rest @ ..` binds the middle as a
+sub-slice. For `swap_halves`, `split_at_mut` gives you two non-overlapping
+`&mut` halves the borrow checker accepts.
+'''

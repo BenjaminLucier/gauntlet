@@ -1,0 +1,29 @@
+title = "Regular Expression Matching"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(|s| * |p|)`
+- Space: `O(|s| * |p|)` (or `O(|p|)` with rolling rows)
+'''
+
+[[hints]]
+text = '''
+Look at the pattern one *element* at a time, where an element is a character
+optionally followed by `*`. Let `m(i, j)` be "does `s[i..]` match the elements
+from `j` on?". If element `j` is not starred, its character must match `s[i]`
+and you continue with `m(i + 1, j + 1)`.
+'''
+
+[[hints]]
+text = '''
+If element `j` is starred, either use it zero times — `m(i, j + 1)` — or, if
+`s[i]` matches it, consume one character and stay on the same element:
+`m(i + 1, j)`.
+'''
+
+[[hints]]
+text = '''
+That recursion is exponential on inputs like `s = "aaaa…a"`, `p = "a*a*a*…a*c"`.
+There are only `(|s| + 1) * (elements + 1)` distinct `(i, j)` states — memoize,
+or fill a table from the ends backwards.
+'''

@@ -1,0 +1,19 @@
+title = "Climbing Stairs"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Your last move onto step `n` came either from step `n - 1` or from step `n - 2`.
+So `ways(n) = ways(n - 1) + ways(n - 2)`.
+'''
+
+[[hints]]
+text = '''
+Plain recursion recomputes the same values exponentially many times. Build the
+answer bottom-up instead — and you only ever need the last two values.
+'''

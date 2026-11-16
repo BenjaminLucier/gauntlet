@@ -1,0 +1,24 @@
+title = "Word Search II"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(m * n * 4 * 3^(L-1))` in the worst case (`L` = max word length),
+  independent of the number of words thanks to the trie
+- Space: `O(total length of words)`
+'''
+
+[[hints]]
+text = '''
+Running a single-word search once per word repeats the same board
+exploration for every word sharing a prefix. Put all words in a trie and run
+**one** DFS from each cell, walking the trie alongside the board and stopping
+as soon as the current path isn't a prefix of any word.
+'''
+
+[[hints]]
+text = '''
+Store the word at its end node. When you reach it, record it and clear it, so
+it isn't reported twice. Mark visited cells by temporarily overwriting them
+(e.g. with `b'#'`) and restore them when backtracking. Counting the unfound
+words below each node lets you skip branches that have nothing left to find.
+'''

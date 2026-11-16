@@ -1,0 +1,20 @@
+title = "Time Based Key-Value Store"
+difficulty = "medium"
+
+complexity = '''
+- `set`: `O(1)` amortized (plus hashing the key)
+- `get`: `O(log k)` where `k` is the number of versions of that key
+- Space: `O(total sets)`
+'''
+
+[[hints]]
+text = '''
+Map each key to a `Vec` of `(timestamp, value)` pairs. Because timestamps only
+increase, pushing onto each key's `Vec` keeps it sorted by time for free.
+'''
+
+[[hints]]
+text = '''
+`get` is "find the last entry with time `<= t`" — a binary search over that
+key's `Vec`.
+'''

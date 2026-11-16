@@ -1,0 +1,33 @@
+title = "BFS and DFS"
+difficulty = "medium"
+
+complexity = '''
+- Every function: `O(V + E)` time
+- Space: `O(V)` for the visited marks, queue or stack, and parent array
+'''
+
+[[hints]]
+text = '''
+BFS: a `VecDeque` queue and a `visited` array. Mark a vertex when you
+*enqueue* it, not when you dequeue it — otherwise it can sit in the queue
+several times. The same loop, recording each vertex's parent, gives shortest
+paths in an unweighted graph; the components and 2-colouring functions are
+that loop again, started from every not-yet-seen vertex.
+'''
+
+[[hints]]
+text = '''
+A DFS stack that only holds vertices loses track of *which* neighbor to try
+next. Push `(vertex, index of the next neighbor to try)` instead: look at the
+top frame, advance its index, and either descend into an unvisited neighbor or
+pop the frame once its list is exhausted. That replays a recursive DFS
+exactly.
+'''
+
+[[hints]]
+text = '''
+For the path, walk `parent[]` back from `t` until you reach `s`, then reverse.
+A graph is bipartite when a BFS that gives each newly found vertex the colour
+opposite to its parent never finds an edge between two vertices of the same
+colour (a self-loop is such an edge).
+'''

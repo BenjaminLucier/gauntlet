@@ -1,0 +1,25 @@
+title = "Min Stack"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(1)` per operation (amortized for `push`)
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+A single "current minimum" variable breaks as soon as you pop the minimum —
+what was the minimum before it was pushed?
+'''
+
+[[hints]]
+text = '''
+Record, alongside every element, where the minimum of the stack was *at the
+moment it was pushed*. An index into the element `Vec` works for any `T`.
+'''
+
+[[hints]]
+text = '''
+Watch duplicates: pushing the same minimum twice and popping once must leave
+that value as the minimum.
+'''

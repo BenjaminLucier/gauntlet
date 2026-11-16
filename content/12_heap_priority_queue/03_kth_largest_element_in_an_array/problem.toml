@@ -1,0 +1,27 @@
+title = "Kth Largest Element in an Array"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` average (selection), or `O(n log k)` with a heap
+- Space: `O(n)` for selection on a copy, `O(k)` for a heap
+'''
+
+[[hints]]
+text = '''
+A min-heap holding the `k` largest values seen so far has the answer at its
+root — `O(n log k)`.
+'''
+
+[[hints]]
+text = '''
+Quickselect: partition around a pivot like quicksort, then continue only into
+the side that contains the target index.
+'''
+
+[[hints]]
+text = '''
+Quickselect with a fixed pivot and a two-way partition degrades to `O(n^2)` on
+sorted input and on slices full of equal values. Pick a random pivot and
+partition into `< pivot`, `== pivot`, `> pivot` (three-way / Dutch flag) — or
+lean on `select_nth_unstable`, which already guards against both.
+'''

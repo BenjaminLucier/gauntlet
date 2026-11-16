@@ -1,0 +1,18 @@
+title = "Partition Labels"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)` besides the output (one slot per possible byte)
+'''
+
+[[hints]]
+text = '''
+First record the last index at which each character appears.
+'''
+
+[[hints]]
+text = '''
+Scan left to right, extending the current piece's end to the last occurrence
+of every character you see. When your index reaches that end, close the piece.
+'''

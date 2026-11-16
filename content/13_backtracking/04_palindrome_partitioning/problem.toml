@@ -1,0 +1,19 @@
+title = "Palindrome Partitioning"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * 2^n)` — there can be `2^(n-1)` partitions
+- Space: `O(n^2)` for a palindrome table, `O(n)` recursion besides the output
+'''
+
+[[hints]]
+text = '''
+Choose the first piece: try every end `j` such that `s[0..=j]` is a palindrome,
+then recursively partition the rest.
+'''
+
+[[hints]]
+text = '''
+Precompute `is_pal[i][j]` with DP (`c[i] == c[j] && is_pal[i+1][j-1]`) so each
+palindrome check is `O(1)`.
+'''

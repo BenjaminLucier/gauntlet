@@ -1,0 +1,30 @@
+title = "Segment Tree"
+difficulty = "medium"
+
+complexity = '''
+- `new`: `O(n)`
+- `set`, `query`: `O(log n)`
+- Space: `O(n)` (`2n` items bottom-up, or up to `4n` for the recursive layout)
+'''
+
+[[hints]]
+text = '''
+Store the tree in a flat `Vec`. Each internal node holds the combination of
+its two children's ranges; build bottom-up so every node is computed once.
+An update changes one leaf and then only the `O(log n)` nodes above it.
+'''
+
+[[hints]]
+text = '''
+A compact layout: `2n` slots, element `i` at `n + i`, node `i`'s children at
+`2i` and `2i + 1`, root at `1`. To query `[l, r)`, shift both ends to leaves
+and climb: when `l` is a right child, take it and step past it; when `r` is
+a right child, step back and take the node before it.
+'''
+
+[[hints]]
+text = '''
+`combine` need not be commutative. Keep two accumulators: one growing from the
+left (`left = combine(left, node)`) and one from the right
+(`right = combine(node, right)`), and combine them at the end.
+'''

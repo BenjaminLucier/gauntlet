@@ -1,0 +1,19 @@
+title = "Max Area of Island"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(m * n)`
+'''
+
+[[hints]]
+text = '''
+Flood-fill each island once (DFS or BFS from every unvisited land cell), and
+have the fill report how many cells it visited.
+'''
+
+[[hints]]
+text = '''
+Mark a cell visited the moment you push it, otherwise a cell reachable from two
+neighbours is counted twice.
+'''

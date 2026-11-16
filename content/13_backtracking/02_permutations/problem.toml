@@ -1,0 +1,19 @@
+title = "Permutations"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * n!)`
+- Space: `O(n)` besides the output
+'''
+
+[[hints]]
+text = '''
+Build the permutation left to right. At each position try every item that
+hasn't been used yet (track with a `Vec<bool>`), recurse, then undo.
+'''
+
+[[hints]]
+text = '''
+Swap-based alternative: for position `i`, swap each element `j >= i` into
+position `i`, recurse on `i + 1`, then swap back.
+'''

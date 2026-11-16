@@ -1,0 +1,26 @@
+title = "Reorder List"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)` extra — no `Vec` of nodes
+'''
+
+[[hints]]
+text = '''
+Break it into three problems you already know: split the list in the middle,
+reverse the second half, then merge the two halves by alternating nodes.
+'''
+
+[[hints]]
+text = '''
+The first half keeps `(n + 1) / 2` nodes; the reversed second half is equal in
+length or one shorter. Walk to the last node of the first half and `take()` its
+`next`.
+'''
+
+[[hints]]
+text = '''
+Alternate-merge with a cursor on the first half: after each of its nodes,
+insert one node popped off the reversed half, then step the cursor past both.
+'''

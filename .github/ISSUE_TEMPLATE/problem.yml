@@ -1,0 +1,64 @@
+name: Problem content
+description: A test, statement, hint or reference solution of one of the problems is wrong.
+labels: [content]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For a problem that is wrong rather than the app around it. If your
+        solution fails a test you think is wrong, please paste the test and
+        your code: that is usually all it takes to settle it.
+  - type: input
+    id: problem
+    attributes:
+      label: Problem id
+      description: The slug shown in the app, such as `three_sum`.
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: What is wrong?
+      options:
+        - A test rejects a correct solution
+        - A test accepts a wrong solution
+        - The statement, examples or constraints
+        - A hint
+        - The reference solution
+        - The template (signature, doc comments)
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What is wrong and why. Quote the test or the sentence, and say what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Your code
+      description: The solution that is wrongly rejected or accepted, if that is the problem. It is a spoiler for others, so only what is needed.
+      render: rust
+  - type: textarea
+    id: output
+    attributes:
+      label: Test output
+      description: The failing test's output, if any.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Gauntlet version
+      description: The output of `gauntlet --version`.
+    validations:
+      required: true
+  - type: input
+    id: rustc
+    attributes:
+      label: Rust version
+      description: The output of `rustc --version`.
+    validations:
+      required: true

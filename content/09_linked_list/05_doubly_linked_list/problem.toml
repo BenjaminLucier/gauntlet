@@ -1,0 +1,34 @@
+title = "Doubly Linked List (Arena)"
+difficulty = "hard"
+
+complexity = '''
+- `push_front`, `push_back`, `pop_front`, `pop_back`: amortized `O(1)`
+- `insert_after`, `remove`, `get`, `get_mut`: `O(1)` given a handle (amortized for inserts)
+- Iterating: `O(1)` per element
+- Space: `O(peak len)` — freed slots are reused, never leaked
+'''
+
+[[hints]]
+text = '''
+Store the nodes in a `Vec` of slots; a "pointer" is just the index of a slot.
+Each occupied slot holds the value plus `prev: Option<usize>` and
+`next: Option<usize>`; the list itself remembers `head`, `tail` and `len`.
+A `Handle` is the slot index, wrapped so users can't do arithmetic on it.
+'''
+
+[[hints]]
+text = '''
+An `enum Slot<T> { Used { value, prev, next }, Free { next_free: Option<usize> } }`
+gives you the free list for free: a removed slot becomes `Free` and points at
+the previous free-list head. Allocating pops a slot off that list, or pushes a
+new one if it's empty. A handle is valid only while its slot is `Used`.
+'''
+
+[[hints]]
+text = '''
+Write one private `link(prev, value, next)` that fills a slot and patches the
+neighbours (or `head`/`tail` when a neighbour is `None`), and one `unlink`.
+Then `push_front` is `link(None, v, head)`, `push_back` is
+`link(tail, v, None)`, `insert_after(h)` is `link(h, v, h.next)`, and both
+pops are `remove` on `head` / `tail`.
+'''

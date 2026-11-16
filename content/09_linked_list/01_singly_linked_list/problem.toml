@@ -1,0 +1,31 @@
+title = "Singly Linked List"
+difficulty = "medium"
+
+complexity = '''
+- `push_front`, `pop_front`, `peek_front`, `len`: `O(1)`
+- `reverse`: `O(n)` time, `O(1)` extra space (no new nodes)
+- Iterating: `O(1)` per element; dropping the list: `O(n)` with `O(1)` stack
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+`Option::take` is the key move: `self.head.take()` leaves `None` behind and
+hands you the owned `Box<Node<T>>`, so you can rewire `next` and put the box
+back. Keep the length in a field so `len` is `O(1)`.
+'''
+
+[[hints]]
+text = '''
+`reverse` walks the list once with two owned links, `prev` and `current`:
+detach `current`'s `next`, point it at `prev`, and step forward. The same loop
+without the re-linking is an iterative `Drop`: take each node's `next` before
+the node itself is dropped, so no drop ever recurses.
+'''
+
+[[hints]]
+text = '''
+The borrowing iterators hold `Option<&'a Node<T>>` / `Option<&'a mut Node<T>>`
+and step with `as_deref()` / `as_deref_mut()`. For `IterMut`, `take()` the
+current reference out of `self` first — a `&mut` can't be copied, only moved.
+'''

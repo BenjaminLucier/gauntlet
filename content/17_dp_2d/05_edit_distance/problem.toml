@@ -1,0 +1,26 @@
+title = "Edit Distance"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(min(m, n))` (an `O(m * n)` table is fine too)
+'''
+
+[[hints]]
+text = '''
+Let `d[i][j]` be the distance between the prefixes `from[..i]` and `to[..j]`.
+Turning a prefix into the empty string costs its length: `d[i][0] = i`,
+`d[0][j] = j`.
+'''
+
+[[hints]]
+text = '''
+If `from[i - 1] == to[j - 1]`, then `d[i][j] = d[i - 1][j - 1]`. Otherwise it is
+`1 + min(d[i - 1][j]` (delete), `d[i][j - 1]` (insert), `d[i - 1][j - 1]` (replace)`)`.
+'''
+
+[[hints]]
+text = '''
+Only the previous row is needed. Keep the old `d[i - 1][j - 1]` in a temporary
+before you overwrite it.
+'''

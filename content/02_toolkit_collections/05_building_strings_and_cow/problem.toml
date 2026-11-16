@@ -1,0 +1,25 @@
+title = "Building Strings and Cow"
+difficulty = "medium"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after. `String`'s
+building methods are on <https://doc.rust-lang.org/std/string/struct.String.html>;
+`Cow` is at <https://doc.rust-lang.org/std/borrow/enum.Cow.html>.
+'''
+
+[[hints]]
+text = '''
+`write!` and `writeln!` work on any `fmt::Write`, and `String` is one: bring
+the trait into scope with `use std::fmt::Write`. They return a `fmt::Result`
+that can't actually fail for a `String`. `collect::<String>()` accepts
+iterators of `char`, `&str` or `String`.
+'''
+
+[[hints]]
+text = '''
+The `Cow` pattern: check whether anything needs to change first. If not,
+`Cow::Borrowed(s)`; if so, build a `String` and return `Cow::Owned`. On a
+`&mut Cow`, `to_mut()` clones a borrowed value into an owned one (once) and
+hands you a `&mut String` — so only call it when you're about to modify.
+'''

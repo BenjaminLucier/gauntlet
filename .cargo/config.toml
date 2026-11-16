@@ -1,0 +1,19 @@
+# `cargo run` (and `cargo test`) keep everything gauntlet writes under
+# target/dev, so trying things out never touches your real progress in
+# ~/.local/share/gauntlet (%APPDATA%\gauntlet on Windows, where gauntlet
+# reads the XDG variables only when they're set, as here). They also read
+# the problems straight from content/ instead of the copy embedded at build
+# time.
+#
+# The XDG variables are forced, because many shells already export them. For
+# a dev build on your real progress, run the binary outside cargo:
+#
+#     cargo build --release && target/release/gauntlet
+#
+# `cargo clean` wipes the scratch data.
+
+[env]
+GAUNTLET_CONTENT_DIR = { value = "content", relative = true }
+XDG_DATA_HOME = { value = "target/dev/data", relative = true, force = true }
+XDG_CACHE_HOME = { value = "target/dev/cache", relative = true, force = true }
+XDG_STATE_HOME = { value = "target/dev/state", relative = true, force = true }

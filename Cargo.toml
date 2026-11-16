@@ -2,20 +2,49 @@
 name = "gauntlet"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.91"
+description = "128 practice problems that take you from knowing Rust to being fluent in it, in a terminal trainer"
 license = "MIT OR Apache-2.0"
+readme = "README.md"
 repository = "https://github.com/BenjaminLucier/gauntlet"
+keywords = ["rust", "practice", "exercises", "algorithms", "tui"]
+categories = ["command-line-utilities", "development-tools"]
+# The problems in content/ are embedded in the binary, and assets/ holds the
+# syntax themes it embeds too.
+include = [
+    "/assets",
+    "/build.rs",
+    "/content",
+    "/src",
+    "/CHANGELOG.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT",
+    "/README.md",
+]
+
+# `cargo binstall gauntlet` downloads the binaries the release workflow
+# attaches to each GitHub Release instead of compiling.
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ target }{ archive-suffix }"
+bin-dir = "{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"
+
+[package.metadata.binstall.overrides.aarch64-pc-windows-msvc]
+pkg-fmt = "zip"
 
 [dependencies]
 ansi-to-tui = "8.0.1"
 catppuccin = { version = "2.8.0", features = ["ratatui"] }
 chrono = { version = "0.4.45", features = ["serde"] }
 color-eyre = "0.6.5"
-crossterm = "0.29"
-libc = "0.2.191"
+etcetera = "0.11.0"
+fs4 = { version = "1.1.0", features = ["sync"] }
+include_dir = "0.7.4"
 notify = "8"
-quick-xml = "0.42.0"
 ratatui = { version = "0.30.2", features = ["unstable-rendered-line-info"] }
-rs-fsrs = "1.2.1"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
 terminal-colorsaurus = "1.0.3"
@@ -25,3 +54,19 @@ tracing = "0.1.44"
 tracing-subscriber = "0.3.23"
 tui-markdown = "0.3.13"
 tui-tree-widget = "0.24.1"
+
+# The peak memory of a test run: `wait4`'s rusage on Unix, the process's
+# memory counters on Windows.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.191"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_System_ProcessStatus"] }
+
+# The prebuilt binaries in GitHub Releases. Slower to build than `release`,
+# so `cargo install` keeps the default profile.
+[profile.dist]
+inherits = "release"
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,26 @@
+title = "Word Ladder"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(N · L² · 26)` (or `O(N · L²)` with wildcard buckets), `N` words of length `L`
+- Space: `O(N · L)`
+'''
+
+[[hints]]
+text = '''
+Words are nodes; one-letter differences are edges. Shortest sequence = BFS
+from `begin`.
+'''
+
+[[hints]]
+text = '''
+Comparing every pair of words is `O(N² · L)`, quadratic in the dictionary size.
+Instead, generate neighbours: for each position, try all 26 letters and look the
+result up in a hash set, which is linear in `N`.
+'''
+
+[[hints]]
+text = '''
+Remove a word from the set as soon as you enqueue it so it's never visited
+twice. Count levels starting at 1 for `begin`.
+'''

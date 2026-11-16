@@ -1,0 +1,32 @@
+title = "Knuth–Morris–Pratt"
+difficulty = "medium"
+
+complexity = '''
+- `prefix_function`: `O(m)` time, `O(m)` space for a pattern of length `m`
+- `find_all` / `find_all_in`: `O(n + m)` time, `O(m)` extra space plus the output
+- `find_first` / `find_first_in`: `O(n + m)` worst case, and they stop at the
+  first match
+'''
+
+[[hints]]
+text = '''
+`pi[i]` is the length of the longest proper prefix of `pattern[..=i]` that is
+also a suffix of it. When the next character doesn't match after `k`
+matched characters, you don't restart: the longest shorter match you could
+still be in the middle of has length `pi[k - 1]`.
+'''
+
+[[hints]]
+text = '''
+Computing `pi` is matching the pattern against itself. Keep `k = pi[i - 1]`;
+while `k > 0` and `pattern[i] != pattern[k]`, fall back to `k = pi[k - 1]`;
+then extend by one if they're equal. Each fallback shrinks `k`, and `k` only
+grows by one per step — that's why the whole thing is linear.
+'''
+
+[[hints]]
+text = '''
+Scanning the text is the same loop with the text on one side. After a full
+match (`k == m`), report it at `i + 1 - m` and continue from `k = pi[m - 1]`
+rather than 0 — otherwise you miss overlapping matches.
+'''

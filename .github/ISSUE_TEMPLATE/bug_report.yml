@@ -1,0 +1,72 @@
+name: Bug report
+description: The app itself is broken or wrong (for a wrong test or statement, use "Problem content").
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. For a security problem,
+        please use [private reporting](https://github.com/BenjaminLucier/gauntlet/security/advisories/new) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `gauntlet run two_pointers`
+        2. ...
+  - type: input
+    id: problem
+    attributes:
+      label: Problem id
+      description: The problem you were on, if any, such as `three_sum`.
+  - type: input
+    id: version
+    attributes:
+      label: Gauntlet version
+      description: The output of `gauntlet --version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      options:
+        - Homebrew
+        - Windows install script
+        - cargo install / cargo binstall
+        - GitHub Release download
+        - Built from source
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 26.1, Ubuntu 24.04, Windows 11 ...
+    validations:
+      required: true
+  - type: input
+    id: terminal
+    attributes:
+      label: Terminal
+      description: Most display problems depend on the terminal and its font.
+      placeholder: Ghostty 1.4, iTerm2, Windows Terminal, kitty, WezTerm ...
+  - type: input
+    id: rustc
+    attributes:
+      label: Rust version
+      description: The output of `rustc --version`. Gauntlet compiles your code with it.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, error output, or the end of the log (`GAUNTLET_LOG=debug` gives more).

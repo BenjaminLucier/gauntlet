@@ -1,0 +1,25 @@
+title = "Reverse Nodes in k-Group"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)` extra
+'''
+
+[[hints]]
+text = '''
+You already know how to reverse a whole list. Here you reverse exactly `k`
+nodes, then attach the reversed group to the end of the result built so far.
+'''
+
+[[hints]]
+text = '''
+Before reversing a group, make sure `k` nodes are actually left — counting the
+length once up front makes this easy (`len / k` full groups).
+'''
+
+[[hints]]
+text = '''
+When all full groups are done, write the untouched remainder into the cursor in
+one assignment.
+'''

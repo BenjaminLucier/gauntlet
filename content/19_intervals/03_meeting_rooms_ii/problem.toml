@@ -1,0 +1,25 @@
+title = "Meeting Rooms II"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+The answer is the maximum number of meetings in progress at any single moment.
+'''
+
+[[hints]]
+text = '''
+Sort by start and keep a min-heap of end times of rooms in use; reuse the
+earliest-ending room if it's free by the time the meeting starts.
+'''
+
+[[hints]]
+text = '''
+Alternatively: sort the start times and the end times separately and sweep:
+a start increments the count, an end decrements it. When a start and an end
+coincide, process the end first.
+'''

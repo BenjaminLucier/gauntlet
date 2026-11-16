@@ -1,0 +1,20 @@
+title = "Redundant Connection"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n · α(n))`
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Only edges on the single cycle are candidates, and the answer is the cycle edge
+that comes last in the input.
+'''
+
+[[hints]]
+text = '''
+Add edges one at a time with union-find. The first edge whose endpoints are
+already connected is the one that completes the cycle — and every other cycle
+edge was added before it, so it is the last one.
+'''

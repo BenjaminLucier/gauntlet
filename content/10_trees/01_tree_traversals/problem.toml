@@ -1,0 +1,31 @@
+title = "Tree Traversals"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` for every traversal
+- Space: `O(h)` extra for the depth-first ones (recursion or explicit stack,
+  `h` = height, up to `n` on a degenerate tree); `O(w)` for the level-order
+  queue (`w` = widest level); plus the output
+'''
+
+[[hints]]
+text = '''
+The three depth-first orders differ only in *when* a node's value is emitted:
+before its children (pre), between them (in), or after them (post). Write the
+recursive versions first, as a helper that pushes into a `&mut Vec<i32>`.
+'''
+
+[[hints]]
+text = '''
+For the iterative versions, a `Vec<&TreeNode>` plays the role of the call
+stack: it holds the nodes you've started but not finished. For preorder, think
+about which child must come off the stack first, and so which one to push
+last. For inorder, ask what a node is waiting for before it can be emitted.
+'''
+
+[[hints]]
+text = '''
+Postorder is the reverse of a "root, right, left" preorder — emit in that order
+and reverse the result at the end. (Or keep one stack plus the last node you
+emitted, and only emit a node once its right subtree is done.)
+'''

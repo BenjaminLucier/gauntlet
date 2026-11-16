@@ -1,0 +1,19 @@
+title = "Longest Substring Without Repeating Characters"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` expected
+- Space: `O(k)` where `k` is the number of distinct characters
+'''
+
+[[hints]]
+text = '''
+Keep a window `[left, right]` with no repeats. Extend `right` one step at a
+time; when the new character is already in the window, shrink from the left.
+'''
+
+[[hints]]
+text = '''
+Store the last position of each character. On a repeat, jump `left` to just
+past that position — but never move `left` backwards (try `"abba"`).
+'''

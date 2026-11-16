@@ -1,0 +1,20 @@
+title = "Remove Nth Node From End of List"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(len)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+The `n`-th node from the end is the `(len - n)`-th node from the front
+(0-based). Count first.
+'''
+
+[[hints]]
+text = '''
+Removing a node means replacing the link that points to it (`head`, or some
+node's `next`) with that node's own `next`. A `&mut List` cursor can point at
+either kind of link.
+'''

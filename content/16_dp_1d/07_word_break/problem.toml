@@ -1,0 +1,22 @@
+title = "Word Break"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * k^2)` with a hash set of words, for `n = s.len()` and words of
+  at most `k` bytes (or `O(n * m * k)` comparing all `m` words at every position)
+- Space: `O(n + total size of the dictionary)`
+'''
+
+[[hints]]
+text = '''
+Matching the longest (or first) word greedily fails: `"cars"` with
+`["car", "ca", "rs"]` only works as `"ca" + "rs"`. Plain backtracking works
+but is exponential on inputs like `"aaaa…ab"`.
+'''
+
+[[hints]]
+text = '''
+Let `ok[i]` mean "the first `i` bytes of `s` can be segmented", with
+`ok[0] = true`. Then `ok[i]` is true if some word ends at byte `i` and `ok`
+holds where that word starts.
+'''

@@ -1,0 +1,20 @@
+title = "Merge Intervals"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log n)`
+- Space: `O(1)` extra beyond the input buffer (besides sorting)
+'''
+
+[[hints]]
+text = '''
+Sort by start. Now any interval that overlaps the current merged group must
+come right after it.
+'''
+
+[[hints]]
+text = '''
+Keep the last merged interval. If the next one starts at or before its end,
+extend the end to `max(end, next_end)` — not just `next_end`, since the next
+interval may be nested inside.
+'''

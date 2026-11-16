@@ -1,0 +1,20 @@
+title = "Group Anagrams"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * k)` where `k` is the maximum word length
+  (`O(n * k log k)` with sorted keys is also fine)
+- Space: `O(n * k)`
+'''
+
+[[hints]]
+text = '''
+Two words are anagrams iff they have the same *canonical form*. What
+canonical form could you compute for each word?
+'''
+
+[[hints]]
+text = '''
+The sorted letters work as a key, and so does a letter-count array. Use a
+`HashMap<key, Vec<&str>>`.
+'''

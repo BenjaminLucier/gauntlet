@@ -1,0 +1,32 @@
+title = "Hash Map (Separate Chaining)"
+difficulty = "medium"
+
+complexity = '''
+- `get`, `get_mut`, `contains_key`, `remove`: `O(1)` expected
+- `insert`, `get_or_insert_with`: `O(1)` expected, amortized over resizes
+- `iter`: `O(buckets + len)` for a full pass
+- Space: `O(peak len)` — the bucket array doubles as the map grows and never shrinks
+'''
+
+[[hints]]
+text = '''
+Hash the key to a `u64`, reduce it to a bucket index (`hash % buckets.len()`,
+or a mask if the count is a power of two), and keep every pair whose key lands
+there in that bucket's `Vec`. Every operation is "find the bucket, scan it".
+'''
+
+[[hints]]
+text = '''
+Keep `len / buckets.len()` bounded: before inserting a new key, if the load
+factor would pass a threshold (say 3/4), build a bucket array twice the size
+and move every pair into the bucket its hash picks *in the new array*. The
+index depends on the bucket count, so nothing can stay where it was.
+'''
+
+[[hints]]
+text = '''
+`get_or_insert_with` fights the borrow checker if you return the reference
+found while searching. Search for the *position* (`iter().position(..)`)
+instead; insert if it's `None`; then take `&mut buckets[i][pos].1` once, at
+the end.
+'''

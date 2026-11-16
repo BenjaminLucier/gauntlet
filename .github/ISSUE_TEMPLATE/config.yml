@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/BenjaminLucier/gauntlet/security/advisories/new
+    about: Please report security problems privately, not in a public issue.
+  - name: Ask a question
+    url: https://github.com/BenjaminLucier/gauntlet/discussions
+    about: Stuck on a problem, or not sure something is a bug? Ask in Discussions.

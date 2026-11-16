@@ -1,0 +1,27 @@
+title = "Best Time to Buy and Sell Stock with Cooldown"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+At the end of each day you are in one of three states: **holding** a share,
+**just sold** today (so tomorrow is a cooldown), or **resting** (free to buy).
+Write the best profit for each state in terms of yesterday's states.
+'''
+
+[[hints]]
+text = '''
+`hold = max(hold, rest - price)`, `sold = hold_prev + price`,
+`rest = max(rest, sold_prev)`. Be careful to use *yesterday's* values on the
+right-hand side.
+'''
+
+[[hints]]
+text = '''
+Summing every positive day-to-day difference (the answer without a cooldown) is
+too optimistic here — Example 1 would give 4.
+'''

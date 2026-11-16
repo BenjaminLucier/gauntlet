@@ -1,0 +1,25 @@
+title = "Subsets II"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * 2^n)`
+- Space: `O(n)` besides the output
+'''
+
+[[hints]]
+text = '''
+Sort first so equal values are adjacent.
+'''
+
+[[hints]]
+text = '''
+Record the current path at every node of the recursion, then loop `i` from
+`start`, skipping `items[i]` when `i > start && items[i] == items[i - 1]` — at a
+given depth, picking the second copy repeats the branch of the first.
+'''
+
+[[hints]]
+text = '''
+Equivalently, for a value `v` that occurs `c` times, branch on taking it
+`0, 1, …, c` times.
+'''

@@ -1,0 +1,26 @@
+title = "Merge k Sorted Lists"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(N log k)` where `N` is the total number of nodes
+- Space: `O(k)`
+'''
+
+[[hints]]
+text = '''
+Merging the lists one after another into an accumulator is `O(N * k)` — each
+merge re-walks the growing result. Can you always find the overall smallest
+head quickly?
+'''
+
+[[hints]]
+text = '''
+Keep the current head of every non-empty list in a min-heap. Pop the smallest,
+append that node to the result, and push the new head of the list it came from.
+'''
+
+[[hints]]
+text = '''
+Alternative: divide and conquer — merge lists pairwise (0 with 1, 2 with 3, …)
+and repeat; that's `log k` rounds of `O(N)` work each.
+'''

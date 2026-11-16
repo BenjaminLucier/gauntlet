@@ -1,0 +1,19 @@
+title = "Invert Binary Tree"
+difficulty = "easy"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(h)` for the recursion, where `h` is the height
+'''
+
+[[hints]]
+text = '''
+The mirror of a tree is: the same root, with the mirror of the right subtree
+on the left and the mirror of the left subtree on the right.
+'''
+
+[[hints]]
+text = '''
+You never need a new node: swap the two children of each node, then recurse
+into both. An explicit stack (or a `VecDeque`) works just as well.
+'''

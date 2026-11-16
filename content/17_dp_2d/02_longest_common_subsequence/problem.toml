@@ -1,0 +1,26 @@
+title = "Longest Common Subsequence"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(a.len() * b.len())`
+- Space: `O(min(a.len(), b.len()))` (an `O(a.len() * b.len())` table is fine too)
+'''
+
+[[hints]]
+text = '''
+Let `dp[i][j]` be the LCS of `a[i..]` and `b[j..]`. If the first elements
+match, use them both: `1 + dp[i + 1][j + 1]`. Otherwise drop one of them:
+`max(dp[i + 1][j], dp[i][j + 1])`.
+'''
+
+[[hints]]
+text = '''
+Greedily matching each element to its first occurrence in the other sequence
+is wrong — try `"xab"` vs `"abx"`.
+'''
+
+[[hints]]
+text = '''
+Each row only depends on the previous one, so two rows of length
+`b.len() + 1` suffice.
+'''

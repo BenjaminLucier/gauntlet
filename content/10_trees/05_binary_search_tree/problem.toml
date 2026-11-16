@@ -1,0 +1,35 @@
+title = "Binary Search Tree"
+difficulty = "hard"
+
+complexity = '''
+- `insert`, `get`, `get_mut`, `contains_key`, `remove`, `min`, `max`,
+  `floor`, `ceiling`: `O(h)`, where `h` is the height — `O(log n)` on random
+  keys, `O(n)` on sorted ones (this tree doesn't rebalance)
+- `iter`: `O(n)` for a full pass, `O(h)` extra space for its stack
+- `drop`: `O(n)` time, without recursion
+- `from_iter` / `extend`: one `insert` per item, `O(h)` each
+'''
+
+[[hints]]
+text = '''
+Every mutating operation starts the same way: find the *link* (`&mut
+Option<Box<Node>>`) that either holds the key or is the empty spot where it
+belongs. Write that search once, as a free function from a `&mut Link` to a
+`&mut Link`, and `insert`, `get_mut` and `remove` become short.
+'''
+
+[[hints]]
+text = '''
+Removing a node with two children: detach the smallest node of its right
+subtree (walk a cursor left until the next left link is empty, `take()` it,
+and put its right child in its place), then give that node the removed node's
+two subtrees and put it where the removed node was.
+'''
+
+[[hints]]
+text = '''
+The iterator keeps a stack of nodes whose left subtree is already done. Start
+by pushing the root's whole left spine; `next` pops a node, then pushes the
+left spine of its right child. Drop works the same way with owned boxes:
+pop one, `take()` both children onto the stack, let the node go.
+'''

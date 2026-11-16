@@ -1,0 +1,24 @@
+title = "str Methods"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the method it's after, then look it up on
+the `str` page: <https://doc.rust-lang.org/std/primitive.str.html>. Most return
+`&str` slices of the input, so nothing needs allocating.
+'''
+
+[[hints]]
+text = '''
+A *pattern* can be a `char`, a `&str`, an array or slice of `char`s
+(`[',', ';']`) or a closure `|c: char| ...`. Every searching, splitting and
+trimming method accepts any of them. `split_once` and `strip_prefix` return
+`Option`s, so they chain with `?`, `map` and `and_then`.
+'''
+
+[[hints]]
+text = '''
+`find` and `rfind` return *byte* offsets, safe to slice with because they
+always land on a character boundary. `collect()` turns an iterator of
+`Result<T, E>` into a `Result<Vec<T>, E>` that stops at the first error.
+'''

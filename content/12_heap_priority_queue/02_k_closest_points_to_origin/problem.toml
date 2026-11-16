@@ -1,0 +1,25 @@
+title = "K Closest Points to Origin"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n log k)` with a heap, or `O(n)` average with selection
+- Space: `O(k)` with a heap, `O(n)` with selection on a copy
+'''
+
+[[hints]]
+text = '''
+You never need the real distance — `x*x + y*y` (widened) orders points the
+same way.
+'''
+
+[[hints]]
+text = '''
+Keep a **max**-heap of size `k` keyed by squared distance. When it grows past
+`k`, pop the farthest point. What's left are the `k` closest.
+'''
+
+[[hints]]
+text = '''
+Alternatively, partition a copy of the points around the `k`-th smallest
+distance and keep the first `k`.
+'''

@@ -1,0 +1,24 @@
+title = "Longest Repeating Character Replacement"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` (`O(26 n)` is fine)
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+A window is fixable iff `window_len - (count of its most frequent letter) <= k`.
+'''
+
+[[hints]]
+text = '''
+Slide a window, keeping 26 letter counts. Grow on the right; while the window
+isn't fixable, shrink from the left.
+'''
+
+[[hints]]
+text = '''
+Optional trick: you never need to *decrease* the tracked max frequency — the
+answer only improves when a window beats the best max frequency seen so far.
+'''

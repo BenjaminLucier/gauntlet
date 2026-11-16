@@ -1,0 +1,20 @@
+title = "Minimum Window Substring"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(s.len() + t.len())`
+- Space: `O(1)` (fixed alphabet)
+'''
+
+[[hints]]
+text = '''
+Expand a window to the right until it contains all of `t`; then shrink from
+the left as long as it still does, recording the shortest window seen.
+'''
+
+[[hints]]
+text = '''
+Keep `need[c]` (counts from `t`, minus what the window already holds) and a
+single counter of how many characters of `t` are still missing. The window is
+valid exactly when nothing is missing.
+'''

@@ -1,0 +1,24 @@
+title = "Longest Consecutive Sequence"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)` expected
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+Sorting gives `O(n log n)` — remember duplicates don't break a run.
+'''
+
+[[hints]]
+text = '''
+Put everything in a `HashSet`. A value `x` *starts* a run only if `x - 1` is
+not in the set.
+'''
+
+[[hints]]
+text = '''
+Only count upward from run starts. Then each value is visited a constant number
+of times overall — counting from every value is `O(n^2)` on a long run.
+'''

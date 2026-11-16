@@ -1,0 +1,21 @@
+title = "Clone Graph"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(V + E)`
+- Space: `O(V)`
+'''
+
+[[hints]]
+text = '''
+Keep a map from original node to its copy. Before creating a copy, check the
+map — that is what stops you looping forever around a cycle and copying a node
+twice.
+'''
+
+[[hints]]
+text = '''
+Create a node's copy when you first *discover* it, and fill in its neighbour
+list when you *process* it. By then every neighbour has a copy (or gets one on
+the spot).
+'''

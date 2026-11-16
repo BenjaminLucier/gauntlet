@@ -1,0 +1,22 @@
+title = "Stack"
+difficulty = "easy"
+
+complexity = '''
+- `push`: amortized `O(1)`; `pop`, `peek`, `peek_mut`, `len`: `O(1)`
+- Draining the stack through `into_iter`: `O(1)` per element
+- Space: `O(n)`
+'''
+
+[[hints]]
+text = '''
+The top of the stack is the *end* of the `Vec`. `Vec::push`, `Vec::pop` and
+`Vec::last` are already `O(1)` there; the front of a `Vec` is the expensive
+end.
+'''
+
+[[hints]]
+text = '''
+The owning iterator can simply own the whole `Stack<T>` and call `pop` in
+`next`. `FromIterator` pushes each item in turn, so the last item collected
+ends up on top.
+'''

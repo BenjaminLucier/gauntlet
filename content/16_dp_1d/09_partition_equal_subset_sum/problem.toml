@@ -1,0 +1,20 @@
+title = "Partition Equal Subset Sum"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n * sum)`
+- Space: `O(sum)`
+'''
+
+[[hints]]
+text = '''
+If the total is odd, the answer is `false`. Otherwise the question becomes:
+is there a subset summing to exactly `total / 2`?
+'''
+
+[[hints]]
+text = '''
+Keep a boolean table `reachable[s]` ("some subset of the elements seen so far
+sums to `s`"), starting with only `reachable[0]` set. Each element `x` makes
+`s` reachable if `s - x` already was.
+'''

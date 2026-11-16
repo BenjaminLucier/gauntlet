@@ -1,0 +1,23 @@
+title = "Binary Tree Maximum Path Sum"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(h)`
+'''
+
+[[hints]]
+text = '''
+Every path has a single highest node where it "bends". If it bends at `x`,
+its best sum is `x.val + best_down(x.left) + best_down(x.right)`, where
+`best_down(c)` is the best sum of a path that starts at `c` and only goes
+downwards — or `0` if that is negative (just leave that side out).
+'''
+
+[[hints]]
+text = '''
+One post-order DFS can hand `best_down` to the parent (the node plus at most
+**one** child branch — a path can't fork) while also tracking the best
+two-branch "bend here" value. If all values are negative, the answer is the
+largest single value, so don't start the maximum at `0`.
+'''

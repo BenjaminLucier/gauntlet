@@ -1,0 +1,25 @@
+title = "Minimum Interval to Include Each Query"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O((n + q) log(n + q))`
+- Space: `O(n + q)`
+'''
+
+[[hints]]
+text = '''
+Checking every interval for every query is `O(n · q)`. To do better, process
+the queries offline in sorted order (remember their original indices).
+'''
+
+[[hints]]
+text = '''
+Sort intervals by left end. Sweeping queries in increasing order, push every
+interval with `left <= q` into a min-heap keyed by `(size, right)`.
+'''
+
+[[hints]]
+text = '''
+Before answering, pop heap entries whose `right < q` — they can never contain
+this or any later query. The heap top (if any) is the answer.
+'''

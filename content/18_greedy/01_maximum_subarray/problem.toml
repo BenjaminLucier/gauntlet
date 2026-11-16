@@ -1,0 +1,25 @@
+title = "Maximum Subarray"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+A brute force tries every `(start, end)` pair — `O(n^2)`. Can you decide, for
+each index, the best subarray that *ends* there?
+'''
+
+[[hints]]
+text = '''
+If the best sum ending at the previous index is negative, it can only hurt —
+start fresh at the current element.
+'''
+
+[[hints]]
+text = '''
+The subarray must be non-empty: when every number is negative the answer is
+the largest (least negative) element, not 0.
+'''

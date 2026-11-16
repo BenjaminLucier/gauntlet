@@ -1,0 +1,17 @@
+title = "Iterator Adaptors"
+difficulty = "easy"
+
+[[hints]]
+text = '''
+Read each function's doc comment for the adaptor it's after, then look it up on
+the `Iterator` page: <https://doc.rust-lang.org/std/iter/trait.Iterator.html>.
+Most functions are `xs.iter()`, one or two adaptors, then `.collect()`.
+'''
+
+[[hints]]
+text = '''
+For `run_lengths`, make the chars `peekable()`. Each run starts with a plain
+`next()`; `Peekable` also has a method that takes the next item only if it
+equals a given value. `std::iter::from_fn` turns a closure returning `Option`
+into an iterator, which lets you repeat that without writing a loop.
+'''

@@ -1,0 +1,21 @@
+title = "Encode and Decode Strings"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(total length)` for both directions
+- Space: `O(total length)` for the encoding; `decode` allocates only the
+  `Vec` of slices
+'''
+
+[[hints]]
+text = '''
+Any single delimiter character can also appear *inside* a string, so a plain
+`join`/`split` cannot work — which is why each entry carries its length.
+'''
+
+[[hints]]
+text = '''
+Keep a `rest: &str` holding the undecoded tail. Split it at the first `#`,
+parse the length, take that many bytes, and set `rest` to what follows — never
+look for `#` inside the string you just took.
+'''

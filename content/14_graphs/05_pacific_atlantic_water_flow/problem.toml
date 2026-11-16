@@ -1,0 +1,20 @@
+title = "Pacific Atlantic Water Flow"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(m * n)`
+- Space: `O(m * n)`
+'''
+
+[[hints]]
+text = '''
+Searching from every cell toward the oceans is `O((m*n)^2)`. Turn it around:
+start at the ocean and walk **uphill** (to neighbours with height `>=` the
+current one).
+'''
+
+[[hints]]
+text = '''
+Run that reverse search twice — once seeded with every Pacific-edge cell, once
+with every Atlantic-edge cell — and return the cells marked by both.
+'''

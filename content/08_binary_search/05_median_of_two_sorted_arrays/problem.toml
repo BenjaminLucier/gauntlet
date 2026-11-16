@@ -1,0 +1,27 @@
+title = "Median of Two Sorted Arrays"
+difficulty = "hard"
+
+complexity = '''
+- Time: `O(log(min(m, n)))`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Think of cutting `a` after `i` elements and `b` after `j` elements with
+`i + j = (m + n + 1) / 2`. The cut is correct when everything left of both cuts
+is `<=` everything right of them: `a[i-1] <= b[j]` and `b[j-1] <= a[i]`.
+'''
+
+[[hints]]
+text = '''
+Binary search `i` over `0..=m` on the **shorter** slice. If `a[i-1] > b[j]`,
+`i` is too large; if `b[j-1] > a[i]`, `i` is too small. Treat out-of-range
+neighbours as `-inf` / `+inf`.
+'''
+
+[[hints]]
+text = '''
+With a correct cut, the median is `max(left side)` for an odd total, or
+`(max(left side) + min(right side)) / 2` for an even total.
+'''

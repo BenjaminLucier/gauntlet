@@ -1,0 +1,20 @@
+title = "Lowest Common Ancestor of a Binary Search Tree"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(h)` — no need to visit nodes off the search path
+- Space: `O(1)` iteratively
+'''
+
+[[hints]]
+text = '''
+Start at the root. If both values are smaller than the current node, the
+answer is in the left subtree; if both are larger, it's in the right subtree.
+'''
+
+[[hints]]
+text = '''
+Otherwise the values split here (or one of them *is* this node), so this node
+is the only candidate. Because a value might be missing, confirm both are
+reachable from it with ordinary BST searches — still `O(h)`.
+'''

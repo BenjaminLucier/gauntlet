@@ -1,0 +1,24 @@
+title = "Product of Array Except Self"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(n)`
+- Space: `O(1)` extra (the output vector doesn't count)
+'''
+
+[[hints]]
+text = '''
+`answer[i]` = (product of everything left of `i`) × (product of everything
+right of `i`).
+'''
+
+[[hints]]
+text = '''
+Fill `answer` with prefix products in a left-to-right pass, then sweep
+right-to-left keeping a running suffix product and multiply it in.
+'''
+
+[[hints]]
+text = '''
+Division breaks on zeros — think about inputs with one zero and with two.
+'''

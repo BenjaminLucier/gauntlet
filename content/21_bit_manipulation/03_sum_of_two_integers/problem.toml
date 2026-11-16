@@ -1,0 +1,20 @@
+title = "Sum of Two Integers"
+difficulty = "medium"
+
+complexity = '''
+- Time: `O(32)` = `O(1)`
+- Space: `O(1)`
+'''
+
+[[hints]]
+text = '''
+Adding bits without carry is XOR: `a ^ b`. The carry bits are where both are
+1: `(a & b) << 1`.
+'''
+
+[[hints]]
+text = '''
+Repeat: `sum = a ^ b`, `carry = (a & b) << 1`, then add `sum` and `carry` the
+same way, until the carry is zero. Two's complement makes negative numbers just
+work.
+'''
