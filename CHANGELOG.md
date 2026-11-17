@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-17
+
+### Fixed
+
+- Linux release builds: the musl archives need a C compiler for Oniguruma,
+  which syntect uses for highlighting. 0.1.1 was tagged but never published;
+  0.1.2 is the first release on GitHub Releases and in the Homebrew tap, with
+  0.1.1's changes.
+
 ## [0.1.1] - 2026-11-17
 
 ### Changed
@@ -14,12 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dates and times are handled with jiff instead of chrono, which is no
   longer maintained (RUSTSEC-2026-0543). History written by 0.1.0 reads the
   same.
-
-### Fixed
-
-- Prebuilt archives and Homebrew: 0.1.0 reached crates.io, but its release
-  build stopped on that advisory. 0.1.1 is the first release on GitHub
-  Releases and in the Homebrew tap.
 
 ## [0.1.0] - 2026-11-17
 
@@ -67,6 +70,7 @@ The first release.
   Windows, `cargo install` or `cargo binstall`, or from the archives on
   GitHub Releases.
 
-[Unreleased]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/BenjaminLucier/gauntlet/releases/tag/v0.1.0

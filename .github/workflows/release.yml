@@ -84,7 +84,8 @@ jobs:
           - target: x86_64-apple-darwin
             os: macos-latest
           # Native runners for each architecture, so no cross toolchain is
-          # needed; Rust bundles musl, making the binaries fully static.
+          # needed; Rust bundles musl, and musl-tools covers the C code, making
+          # the binaries fully static.
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
           - target: aarch64-unknown-linux-musl
@@ -111,6 +112,17 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: echo "RUSTFLAGS=-C target-feature=+crt-static" >> "$GITHUB_ENV"
+      # syntect (through tui-markdown) builds Oniguruma, a C library, so musl
+      # targets need musl's C compiler too. The runner's own architecture
+      # matches the target, so the distribution's musl-gcc does.
+      - name: Install the musl C compiler
+        if: endsWith(matrix.target, '-linux-musl')
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends musl-tools
+          echo "CC_${TARGET//-/_}=musl-gcc" >> "$GITHUB_ENV"
       - uses: taiki-e/upload-rust-binary-action@f0d45ae91ee7b8ee928de7a9d04d893a08bcbec6 # v1.30.2
         id: upload
         with:
