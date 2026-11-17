@@ -2,7 +2,8 @@
 //! their problems), details for whatever is selected on the right. A solved
 //! problem whose best is off the reference solution's pace is marked `▲`.
 
-use chrono::{DateTime, Local};
+use jiff::Timestamp;
+use jiff::tz::TimeZone;
 use ratatui::Frame;
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Style, Stylize};
@@ -264,7 +265,10 @@ fn draw_review(g: &Gauntlet, up: &[usize], frame: &mut Frame, area: Rect, review
                 (None, Some(n)) if n.slower => "▲ could be faster".fg(warn()),
                 _ => "▲ could be leaner".fg(warn()),
             };
-            let last = g.db.history(&p.id).last().map(|s| s.at.with_timezone(&Local).format(date).to_string());
+            let last =
+                g.db.history(&p.id)
+                    .last()
+                    .map(|s| s.at.to_zoned_datetime(TimeZone::system()).strftime(date).to_string());
             let mut cells = vec![Line::from(p.title.clone()), Line::from(why), Line::from(last.unwrap_or_default())];
             if wide {
                 cells.insert(1, Line::from(g.ws.section_of(p).title.clone().fg(muted())));
@@ -505,7 +509,7 @@ fn problem(g: &Gauntlet, idx: usize, frame: &mut Frame, area: Rect, details: &mu
     let timed: Vec<(f64, f64)> = history
         .iter()
         .filter(|s| g.db.counts_for_runs(s))
-        .filter_map(|s| Some((s.at.timestamp() as f64, s.secs?)))
+        .filter_map(|s| Some((s.at.as_second() as f64, s.secs?)))
         .collect();
     let top = timed.iter().map(|&(_, y)| y).fold(0.0, f64::max).max(1.0) * 1.1;
     let top_label = fmt::secs(top);
@@ -587,8 +591,8 @@ fn run_times(frame: &mut Frame, area: Rect, points: &[(f64, f64)], top: f64, top
     // One point (or all at once): give it a day either side.
     let (x0, x1) = if x1 - x0 < 1.0 { (x0 - 86_400.0, x1 + 86_400.0) } else { (x0, x1) };
     let day = |x: f64| {
-        DateTime::from_timestamp(x as i64, 0)
-            .map_or_else(String::new, |d| d.with_timezone(&Local).format("%b %-d").to_string())
+        Timestamp::from_second(x as i64)
+            .map_or_else(|_| String::new(), |t| t.to_zoned_datetime(TimeZone::system()).strftime("%b %-d").to_string())
     };
     let datasets = vec![
         Dataset::default()

@@ -2,7 +2,8 @@
 
 use std::time::Duration;
 
-use chrono::{DateTime, Local, Utc};
+use jiff::Timestamp;
+use jiff::tz::TimeZone;
 
 /// A stopwatch reading: `4:12`, `1:03:07`.
 pub fn clock(d: Duration) -> String {
@@ -58,8 +59,8 @@ pub fn ratio(r: f64) -> String {
 }
 
 /// `2026-11-11 17:42` in local time.
-pub fn local(dt: DateTime<Utc>) -> String {
-    dt.with_timezone(&Local).format("%Y-%m-%d %H:%M").to_string()
+pub fn local(dt: Timestamp) -> String {
+    dt.to_zoned_datetime(TimeZone::system()).strftime("%Y-%m-%d %H:%M").to_string()
 }
 
 /// Seconds as a stopwatch reading: `4:12`.
