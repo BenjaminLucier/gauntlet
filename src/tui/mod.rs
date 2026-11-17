@@ -1144,7 +1144,11 @@ fn is_scroll(code: KeyCode) -> bool {
 }
 
 fn ansi(s: &str) -> Text<'static> {
-    theme::recolor(s.into_text().unwrap_or_else(|_| Text::from(s.to_string())))
+    // libtest resets colours with terminfo's `sgr0`, which for xterm-256color
+    // (Terminal.app, iTerm2, VS Code) starts with `ESC ( B`, "select the ASCII
+    // character set". That's a no-op here, but ansi-to-tui would show `(B`.
+    let s = s.replace("\x1b(B", "");
+    theme::recolor(s.into_text().unwrap_or_else(|_| Text::from(s.clone())))
 }
 
 /// Every key, in a popup that scrolls when the terminal is too short for it.
@@ -1311,6 +1315,13 @@ mod tests {
     use crate::problem::tests::{Scratch, sample};
 
     const SIZES: [(u16, u16); 3] = [(80, 24), (100, 30), (160, 50)];
+
+    #[test]
+    fn terminfo_sgr0_leaves_no_charset_escape_behind() {
+        let text = ansi("test a ... \x1b[32mok\x1b(B\x1b[m\n");
+        let shown: String = text.lines[0].spans.iter().map(|s| s.content.as_ref()).collect();
+        assert_eq!(shown, "test a ... ok");
+    }
 
     fn load(s: &Scratch, run: bool) -> Gauntlet {
         let mut g = Gauntlet::with_workspace(Workspace::discover_in(s.0.clone()).unwrap()).unwrap();
