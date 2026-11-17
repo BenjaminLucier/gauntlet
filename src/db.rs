@@ -10,7 +10,9 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-use chrono::{DateTime, Local, NaiveDate, Utc};
+use jiff::Timestamp;
+use jiff::civil::Date;
+use jiff::tz::TimeZone;
 
 use crate::perf::{Nudge, Perf};
 use crate::store::{Entry, Event, Rating};
@@ -26,7 +28,7 @@ pub const REVIEW_AT_MOST: u8 = 2;
 /// One solve of a problem, in either mode.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Solve {
-    pub at: DateTime<Utc>,
+    pub at: Timestamp,
     /// Gauntlet: the run. Completionist: `None`.
     pub run: Option<u32>,
     /// Gauntlet: time charged to the problem in the run.
@@ -53,11 +55,11 @@ pub enum RunStatus {
 #[derive(Clone, Debug)]
 pub struct Run {
     pub id: u32,
-    pub started: DateTime<Utc>,
+    pub started: Timestamp,
     pub scope: String,
     /// In order, as started.
     pub problems: Vec<String>,
-    pub finished: Option<DateTime<Utc>>,
+    pub finished: Option<Timestamp>,
     pub deleted: bool,
     /// Problem → seconds, for each problem solved in this run.
     pub times: BTreeMap<String, f64>,
@@ -283,23 +285,24 @@ impl Db {
 
     /// Consecutive local days with at least one solve, ending today (or
     /// yesterday, if nothing yet today).
-    pub fn streak(&self, today: NaiveDate) -> u32 {
-        let days: HashSet<NaiveDate> =
-            self.solves.values().flatten().map(|s| s.at.with_timezone(&Local).date_naive()).collect();
+    pub fn streak(&self, today: Date) -> u32 {
+        let tz = TimeZone::system();
+        let days: HashSet<Date> =
+            self.solves.values().flatten().map(|s| s.at.to_zoned_datetime(tz.clone()).date()).collect();
         let mut day = if days.contains(&today) {
             today
         } else {
-            match today.pred_opt() {
-                Some(d) => d,
-                None => return 0,
+            match today.yesterday() {
+                Ok(d) => d,
+                Err(_) => return 0,
             }
         };
         let mut streak = 0;
         while days.contains(&day) {
             streak += 1;
-            match day.pred_opt() {
-                Some(d) => day = d,
-                None => break,
+            match day.yesterday() {
+                Ok(d) => day = d,
+                Err(_) => break,
             }
         }
         streak
@@ -384,7 +387,7 @@ impl Db {
 mod tests {
     use super::*;
 
-    fn at(s: &str) -> DateTime<Utc> {
+    fn at(s: &str) -> Timestamp {
         s.parse().unwrap()
     }
 
@@ -394,7 +397,7 @@ mod tests {
 
     impl Log {
         fn push(&mut self, event: Event) -> &mut Log {
-            let t = at("2026-11-01T10:00:00Z") + chrono::Duration::minutes(self.0.len() as i64);
+            let t = at("2026-11-01T10:00:00Z") + jiff::SignedDuration::from_mins(self.0.len() as i64);
             self.0.push(Entry { at: t, event });
             self
         }
@@ -655,7 +658,7 @@ mod tests {
             let event = Event::Solved { problem: "a".into(), run: None, secs: None, perf: Perf::default() };
             db.apply(&Entry { at: at(t), event });
         }
-        let day = |s: &str| at(s).with_timezone(&Local).date_naive();
+        let day = |s: &str| at(s).to_zoned_datetime(TimeZone::system()).date();
         assert_eq!(db.streak(day("2026-11-10T12:00:00Z")), 2);
         assert_eq!(db.streak(day("2026-11-11T12:00:00Z")), 2); // not yet today
         assert_eq!(db.streak(day("2026-11-13T12:00:00Z")), 0);

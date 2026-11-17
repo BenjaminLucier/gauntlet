@@ -11,8 +11,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
-use chrono::{Local, Utc};
 use color_eyre::eyre::{Result, bail};
+use jiff::{Timestamp, ZonedDateTime};
 
 use crate::db::{ALL, Db, Pb, RunStatus, SumOfBest};
 use crate::perf::{self, Perf};
@@ -203,7 +203,7 @@ impl Gauntlet {
     }
 
     fn record(&mut self, event: Event) -> Result<()> {
-        let entry = Entry { at: Utc::now(), event };
+        let entry = Entry { at: Timestamp::now(), event };
         tracing::debug!(?entry, "record");
         self.log.append(&entry)?;
         self.db.apply(&entry);
@@ -605,7 +605,7 @@ impl Gauntlet {
     }
 
     pub fn streak(&self) -> u32 {
-        self.db.streak(Local::now().date_naive())
+        self.db.streak(ZonedDateTime::now().date())
     }
 }
 

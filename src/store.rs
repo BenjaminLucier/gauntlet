@@ -16,8 +16,8 @@ use std::fs::{self, OpenOptions};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
-use chrono::{DateTime, Utc};
 use color_eyre::eyre::{Result, WrapErr};
+use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
 
 use crate::perf::Perf;
@@ -119,7 +119,7 @@ pub enum Event {
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Entry {
-    pub at: DateTime<Utc>,
+    pub at: Timestamp,
     #[serde(flatten)]
     pub event: Event,
 }
@@ -253,6 +253,21 @@ mod tests {
     }
 
     #[test]
+    fn reads_timestamps_written_by_chrono() {
+        // 0.1.0 wrote chrono's DateTime<Utc>: RFC 3339 with 0, 3, 6 or 9 fraction digits.
+        let at = |s: &str| {
+            let json = format!(r#"{{"at":"{s}","kind":"run_finished","run":1}}"#);
+            serde_json::from_str::<Entry>(&json).unwrap().at
+        };
+        let whole: Timestamp = "2026-11-12T09:09:30Z".parse().unwrap();
+        assert_eq!(at("2026-11-12T09:09:30Z"), whole);
+        assert_eq!(at("2026-11-12T09:09:30+00:00"), whole);
+        assert_eq!(at("2026-11-12T09:09:30.123Z"), whole + jiff::SignedDuration::from_millis(123));
+        assert_eq!(at("2026-11-12T09:09:30.123456Z"), whole + jiff::SignedDuration::from_micros(123_456));
+        assert_eq!(at("2026-11-12T09:09:30.123456789Z"), whole + jiff::SignedDuration::from_nanos(123_456_789));
+    }
+
+    #[test]
     fn rating_keys() {
         assert_eq!(Rating::from_key('3'), Rating::new(3));
         assert_eq!(Rating::from_key('6'), None);
@@ -267,7 +282,7 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
         let (log, entries) = EventLog::open(path.clone()).unwrap();
         assert!(entries.is_empty());
-        let e = Entry { at: Utc::now(), event: Event::RunFinished { run: 1 } };
+        let e = Entry { at: Timestamp::now(), event: Event::RunFinished { run: 1 } };
         log.append(&e).unwrap();
         fs::OpenOptions::new()
             .append(true)
@@ -290,7 +305,7 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         let whole = "{\"at\":\"2026-11-11T00:00:00Z\",\"kind\":\"run_finished\",\"run\":1}\n";
-        let e = Entry { at: Utc::now(), event: Event::RunFinished { run: 2 } };
+        let e = Entry { at: Timestamp::now(), event: Event::RunFinished { run: 2 } };
 
         // Cut mid-line (and mid-character), then the next append: a line of its own.
         for torn in ["{\"at\":\"2026-11-11T00:00:01Z\",\"ki", "{\"problem\":\"\u{e9}", "\0\0\0\0\n"] {

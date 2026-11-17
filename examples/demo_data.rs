@@ -21,8 +21,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use chrono::{DateTime, Days, Duration, Local, NaiveTime, TimeZone, Utc};
 use color_eyre::eyre::{Result, bail, eyre};
+use jiff::tz::TimeZone;
+use jiff::{SignedDuration, Timestamp, ToSpan, ZonedDateTime};
 use serde_json::{Value, json};
 
 /// "gauntlet" in ASCII.
@@ -79,11 +80,11 @@ fn main() -> Result<()> {
     fs::write(cache.join("reference.json"), serde_json::to_string_pretty(&reference)?)?;
 
     // Which days get practice, and how many problems each.
-    let today = Local::now().date_naive();
+    let today = ZonedDateTime::now().date();
     let mut days = Vec::new();
     for ago in (1..=DAYS).rev() {
         if ago <= STREAK || rng.chance(0.7) {
-            days.push(today - Days::new(ago));
+            days.push(today - (ago as i64).days());
         }
     }
     let mut per_day = vec![1; days.len()];
@@ -99,15 +100,15 @@ fn main() -> Result<()> {
     let mut redo_at = None;
     for (&day, &count) in days.iter().zip(&per_day) {
         let hour = if rng.chance(0.6) { 19 + rng.below(3) } else { 7 };
-        let start = NaiveTime::from_hms_opt(hour as u32, rng.below(60) as u32, 0).unwrap();
-        let mut at = Local.from_local_datetime(&day.and_time(start)).single().unwrap().with_timezone(&Utc);
+        let start = day.at(hour as i8, rng.below(60) as i8, 0, 0);
+        let mut at = start.to_zoned_datetime(TimeZone::system()).unwrap().timestamp();
 
         if redo_at.is_some_and(|d| d <= day) {
             redo_at = None;
             log.push(at, json!({ "kind": "redo", "problem": REDONE }));
             at += minutes(&mut rng, 6, 20);
             log.solve(at, REDONE, None, solve_perf(&mut rng, &reference[REDONE], 1.0));
-            log.push(at + Duration::seconds(9), json!({ "kind": "rated", "problem": REDONE, "rating": 4 }));
+            log.push(at + SignedDuration::from_secs(9), json!({ "kind": "rated", "problem": REDONE, "rating": 4 }));
             at += minutes(&mut rng, 2, 6);
         }
 
@@ -116,12 +117,12 @@ fn main() -> Result<()> {
             let slowness = if p.id == SLOW { 7.0 } else { 1.0 };
             log.solve(at, &p.id, None, solve_perf(&mut rng, &reference[&p.id], slowness));
             let rating = if p.id == REDONE {
-                redo_at = Some(day + Days::new(7));
+                redo_at = Some(day + 7.days());
                 2
             } else {
                 HARD.iter().find(|(id, _)| *id == p.id).map_or_else(|| rating(&mut rng, &p.difficulty), |&(_, r)| r)
             };
-            log.push(at + Duration::seconds(7), json!({ "kind": "rated", "problem": p.id, "rating": rating }));
+            log.push(at + SignedDuration::from_secs(7), json!({ "kind": "rated", "problem": p.id, "rating": rating }));
             fs::write(data.join(format!("{}.rs", p.id)), working(p)?)?;
             done.push(&p.id);
         }
@@ -142,7 +143,7 @@ fn main() -> Result<()> {
         fs::create_dir_all(&dir)?;
         for p in &section {
             let secs = run_secs(&mut rng, &p.difficulty) * pace;
-            at += Duration::milliseconds((secs * 1000.0) as i64);
+            at += SignedDuration::from_millis((secs * 1000.0) as i64);
             log.solve(at, &p.id, Some((runs, secs)), solve_perf(&mut rng, &reference[&p.id], 1.0));
             fs::write(dir.join(format!("{}.rs", p.id)), working(p)?)?;
         }
@@ -255,21 +256,21 @@ fn run_secs(rng: &mut Rng, difficulty: &str) -> f64 {
     (base + rng.below(spread)) as f64 + rng.below(10) as f64 / 10.0
 }
 
-fn minutes(rng: &mut Rng, lo: u64, hi: u64) -> Duration {
-    Duration::seconds((lo * 60 + rng.below((hi - lo) * 60)) as i64)
+fn minutes(rng: &mut Rng, lo: u64, hi: u64) -> SignedDuration {
+    SignedDuration::from_secs((lo * 60 + rng.below((hi - lo) * 60)) as i64)
 }
 
 #[derive(Default)]
 struct Log(Vec<String>);
 
 impl Log {
-    fn push(&mut self, at: DateTime<Utc>, event: Value) {
-        let mut entry = json!({ "at": at.format("%Y-%m-%dT%H:%M:%SZ").to_string() });
+    fn push(&mut self, at: Timestamp, event: Value) {
+        let mut entry = json!({ "at": at.strftime("%Y-%m-%dT%H:%M:%SZ").to_string() });
         entry.as_object_mut().unwrap().extend(event.as_object().unwrap().clone());
         self.0.push(format!("{entry}\n"));
     }
 
-    fn solve(&mut self, at: DateTime<Utc>, problem: &str, run: Option<(usize, f64)>, (ms, bytes): (u64, u64)) {
+    fn solve(&mut self, at: Timestamp, problem: &str, run: Option<(usize, f64)>, (ms, bytes): (u64, u64)) {
         let mut event = json!({ "kind": "solved", "problem": problem });
         if let Some((run, secs)) = run {
             event["run"] = json!(run);
