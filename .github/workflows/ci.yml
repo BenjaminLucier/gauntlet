@@ -132,6 +132,31 @@ jobs:
       # What `cargo install` builds; dev-dependencies may need a newer Rust.
       - run: cargo check --locked
 
+  musl:
+    name: Build (x86_64-unknown-linux-musl)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
+        with:
+          toolchain: stable
+          targets: x86_64-unknown-linux-musl
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      # The release's Linux binaries are static musl builds, and a C dependency
+      # (Oniguruma, through syntect) needs musl's C compiler: build one here so
+      # a release can't be the first to find out.
+      - name: Install the musl C compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends musl-tools
+      - run: cargo build --locked --target x86_64-unknown-linux-musl
+        env:
+          CC_x86_64_unknown_linux_musl: musl-gcc
+
   deny:
     name: Dependencies
     runs-on: ubuntu-latest
@@ -163,7 +188,7 @@ jobs:
   ci:
     name: CI
     if: always()
-    needs: [fmt, clippy, test, content, msrv, deny, zizmor]
+    needs: [fmt, clippy, test, content, msrv, musl, deny, zizmor]
     runs-on: ubuntu-latest
     permissions: {}
     steps:
