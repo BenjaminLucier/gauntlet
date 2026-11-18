@@ -1,80 +1,126 @@
 name: Release
 
-# Push a `vX.Y.Z` tag (see CONTRIBUTING.md, "Releasing"). Nothing is public
-# until every binary has built: the GitHub Release stays a draft until the
-# crate is on crates.io, and the Homebrew tap is updated last.
+# release-plz on every push to main (see CONTRIBUTING.md, "Releasing"):
+#
+# - `release-pr` opens or updates the release PR: the version bump in
+#   Cargo.toml and Cargo.lock, and the CHANGELOG.md section.
+# - `release` does nothing until that PR is merged. Then it publishes the
+#   crate to crates.io, tags the commit and creates a draft GitHub Release.
+#   The binaries build into the draft, which is published only once they are
+#   all up, and the Homebrew tap is updated last.
+#
+# Everything runs in this one workflow: a tag or release created with
+# GITHUB_TOKEN doesn't trigger other workflows.
+#
+# The crates.io trusted publisher names this file and the `release`
+# environment, which only deploys from main.
 
 on:
   push:
-    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+    branches: [main]
 
 permissions: {}
-
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  ci:
-    name: CI
-    uses: $/.github/workflows/ci.yml
-    permissions:
-      contents: read
-
-  check:
-    name: Check version
+  # Uses RELEASE_PLZ_TOKEN (a fine-grained PAT or GitHub App token) instead of
+  # GITHUB_TOKEN so that CI runs on the PR it opens.
+  release-pr:
+    name: Release PR
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Tag matches Cargo.toml and CHANGELOG.md
-        id: version
-        env:
-          TAG: ${{ github.ref_name }}
-        run: |
-          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
-          if [ "v$version" != "$TAG" ]; then
-            echo "::error::Tag $TAG does not match Cargo.toml version $version"
-            exit 1
-          fi
-          if ! grep -q "^## \[$version\]" CHANGELOG.md; then
-            echo "::error::CHANGELOG.md has no section for $version"
-            exit 1
-          fi
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-
-  create-release:
-    name: Create draft release
-    needs: [ci, check]
-    runs-on: ubuntu-latest
+    if: github.repository_owner == 'BenjaminLucier'
     permissions:
       contents: write
+      pull-requests: write
+    concurrency:
+      group: release-plz-pr-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - uses: taiki-e/create-gh-release-action@045e5c0ed9c50cc1f96de7e891a09ad3daea245f # v1.12.0
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
-          changelog: CHANGELOG.md
-          draft: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Attach the Windows install script
+          toolchain: stable
+      - uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
+        with:
+          command: release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN }}
+
+  # Publishes a version that isn't on crates.io yet, with trusted publishing
+  # (no stored registry token), tags it and creates the draft release.
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'BenjaminLucier'
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: read
+    concurrency:
+      group: release-plz-${{ github.ref }}
+      cancel-in-progress: false
+    outputs:
+      created: ${{ steps.release-plz.outputs.releases_created }}
+      tag: ${{ steps.read.outputs.tag }}
+      version: ${{ steps.read.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
+        with:
+          toolchain: stable
+      - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
+        id: auth
+      - uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
+        id: release-plz
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+      - name: Read the release
+        id: read
+        if: steps.release-plz.outputs.releases_created == 'true'
+        env:
+          RELEASES: ${{ steps.release-plz.outputs.releases }}
+        run: |
+          tag=$(jq -r '.[0].tag' <<<"$RELEASES")
+          version=$(jq -r '.[0].version' <<<"$RELEASES")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      # A draft release doesn't create its tag, and the uploads need one.
+      # release-plz pushes the tag itself; this only covers it if it didn't.
+      - name: Make sure the tag exists
+        if: steps.release-plz.outputs.releases_created == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ steps.read.outputs.tag }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --silent 2>/dev/null; then
+            echo "Tag $TAG exists"
+          else
+            echo "::warning::release-plz did not push $TAG; creating it at $GITHUB_SHA"
+            gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA"
+          fi
+      - name: Attach the Windows install script
+        if: steps.release-plz.outputs.releases_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.read.outputs.tag }}
         run: gh release upload "$TAG" install.ps1 --repo "$GITHUB_REPOSITORY"
 
   build:
     name: Build ${{ matrix.target }}
-    needs: create-release
+    needs: release
+    if: needs.release.outputs.created == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -102,6 +148,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.release.outputs.tag }}
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
@@ -128,6 +175,8 @@ jobs:
         with:
           bin: gauntlet
           target: ${{ matrix.target }}
+          # The workflow runs on a push to main, so name the release's tag.
+          ref: refs/tags/${{ needs.release.outputs.tag }}
           archive: $bin-$target
           include: LICENSE-APACHE,LICENSE-MIT,README.md
           checksum: sha256
@@ -142,58 +191,23 @@ jobs:
         with:
           subject-path: ${{ steps.upload.outputs.tar || steps.upload.outputs.zip }}
 
-  publish-crate:
-    name: Publish to crates.io
-    needs: [check, build]
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
-        with:
-          toolchain: stable
-      # The first version is published by hand (trusted publishing needs the
-      # crate to exist), and a re-run must not fail on a version that is
-      # already up.
-      - name: Is this version already published?
-        id: published
-        env:
-          VERSION: ${{ needs.check.outputs.version }}
-        run: |
-          status=$(curl -s -o /dev/null -w '%{http_code}' \
-            -A "gauntlet-release (https://github.com/$GITHUB_REPOSITORY)" \
-            "https://crates.io/api/v1/crates/gauntlet/$VERSION")
-          echo "published=$([ "$status" = 200 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-      - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
-        if: steps.published.outputs.published == 'false'
-        id: auth
-      - if: steps.published.outputs.published == 'false'
-        run: cargo publish --locked
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
-
   publish-release:
     name: Publish release
-    needs: publish-crate
+    needs: [release, build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ needs.release.outputs.tag }}
         run: gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"
 
   homebrew:
     name: Update Homebrew tap
-    needs: [check, publish-release]
-    # Prereleases (v1.2.0-rc.1) stay off Homebrew.
-    if: ${{ !contains(github.ref_name, '-') }}
+    needs: [release, publish-release]
+    # Prereleases (1.2.0-rc.1) stay off Homebrew.
+    if: ${{ !contains(needs.release.outputs.version, '-') }}
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -201,12 +215,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.release.outputs.tag }}
           persist-credentials: false
       - name: Write the formula
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          VERSION: ${{ needs.check.outputs.version }}
+          TAG: ${{ needs.release.outputs.tag }}
+          VERSION: ${{ needs.release.outputs.version }}
         run: |
           mkdir checksums
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.sha256' --dir checksums
@@ -220,7 +235,7 @@ jobs:
           persist-credentials: true # zizmor: ignore[artipacked] the next step pushes; nothing is uploaded
       - name: Commit and push
         env:
-          VERSION: ${{ needs.check.outputs.version }}
+          VERSION: ${{ needs.release.outputs.version }}
         working-directory: tap
         run: |
           mkdir -p Formula
@@ -240,7 +255,7 @@ jobs:
   # Rust toolchain, the same way a player's code is.
   smoke-test:
     name: Install (${{ matrix.name }})
-    needs: [check, homebrew]
+    needs: [release, homebrew]
     strategy:
       fail-fast: false
       matrix:
@@ -256,7 +271,7 @@ jobs:
     steps:
       - if: runner.os != 'Windows'
         env:
-          VERSION: ${{ needs.check.outputs.version }}
+          VERSION: ${{ needs.release.outputs.version }}
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || brew shellenv)"
           brew install BenjaminLucier/tap/gauntlet
@@ -265,7 +280,7 @@ jobs:
       - if: runner.os == 'Windows'
         shell: pwsh
         env:
-          VERSION: ${{ needs.check.outputs.version }}
+          VERSION: ${{ needs.release.outputs.version }}
           REPO: ${{ github.repository }}
         run: |
           $env:GAUNTLET_VERSION = $env:VERSION

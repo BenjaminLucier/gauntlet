@@ -89,36 +89,28 @@ additional terms or conditions.
 
 ## Releasing
 
-For the maintainer. Versions follow [Semantic Versioning](https://semver.org).
+For the maintainer. Versions follow [Semantic Versioning](https://semver.org),
+and releases are automated with [release-plz](https://release-plz.dev) from
+the commit messages on `main`.
 
-1. Add the new section to the changelog, then edit it to read well:
-
-   ```sh
-   git cliff --unreleased --tag vX.Y.Z --prepend CHANGELOG.md
-   ```
-
-   ([git-cliff](https://git-cliff.org): `brew install git-cliff`.) For the
-   first release, rename the hand-written `[Unreleased]` section instead.
-2. Set `version` in `Cargo.toml` and run `cargo check` to update
-   `Cargo.lock`.
-3. Commit as `chore: release vX.Y.Z` and merge it to `main`.
-4. Tag that commit and push the tag:
-
-   ```sh
-   git tag -a vX.Y.Z -m vX.Y.Z
-   git push origin vX.Y.Z
-   ```
+1. Each push to `main` that includes a `feat`, `fix` or `perf` commit opens
+   or updates a release PR. It bumps `version` in `Cargo.toml` and
+   `Cargo.lock` and adds the new `CHANGELOG.md` section. The PR is
+   regenerated on every push, so make any edits to its changelog just
+   before merging.
+2. Merge the release PR.
 
 The [release workflow](.github/workflows/release.yml) takes it from there.
-It checks the tag against `Cargo.toml` and the changelog, runs CI including
-every problem, then builds the macOS, Linux and Windows binaries into a
-draft GitHub Release (with `install.ps1`, the Windows install script),
-publishes the crate to crates.io, publishes the release, updates the
-[Homebrew tap](https://github.com/BenjaminLucier/homebrew-tap) (macOS and
-Linux), and installs the result through Homebrew and the Windows script to
-check it, running `gauntlet check two_pointers` with each. A tag with a
-pre-release suffix, such as `v1.2.0-rc.1`, skips Homebrew, and so its
-installs.
+It publishes the crate to crates.io, tags the commit (`vX.Y.Z`) and creates
+a draft GitHub Release, builds the macOS, Linux and Windows binaries into it
+(with `install.ps1`, the Windows install script), publishes the release,
+updates the [Homebrew tap](https://github.com/BenjaminLucier/homebrew-tap)
+(macOS and Linux), and installs the result through Homebrew and the Windows
+script to check it, running `gauntlet check two_pointers` with each. A
+pre-release version, such as `1.2.0-rc.1`, skips Homebrew, and so its
+installs. The crate is published before the binaries build, so if a build
+fails, re-run the failed jobs; if the code itself is broken, fix it in a
+patch release and delete the stale draft.
 
 To audit problems in bulk with agents, see
 [docs/maintainers/problem-audit.md](docs/maintainers/problem-audit.md).

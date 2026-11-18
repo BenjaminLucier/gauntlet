@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.2] - 2026-11-17
+## [0.1.2](https://github.com/BenjaminLucier/gauntlet/compare/v0.1.1...v0.1.2) - 2026-11-17
 
 ### Fixed
 
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   0.1.2 is the first release on GitHub Releases and in the Homebrew tap, with
   0.1.1's changes.
 
-## [0.1.1] - 2026-11-17
+## [0.1.1](https://github.com/BenjaminLucier/gauntlet/compare/v0.1.0...v0.1.1) - 2026-11-17
 
 ### Changed
 
@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   longer maintained (RUSTSEC-2026-0543). History written by 0.1.0 reads the
   same.
 
-## [0.1.0] - 2026-11-17
+## [0.1.0](https://github.com/BenjaminLucier/gauntlet/releases/tag/v0.1.0) - 2026-11-17
 
 The first release.
 
@@ -69,8 +69,3 @@ The first release.
 - macOS, Linux and Windows. Installs with Homebrew, a PowerShell script on
   Windows, `cargo install` or `cargo binstall`, or from the archives on
   GitHub Releases.
-
-[Unreleased]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.2...HEAD
-[0.1.2]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/BenjaminLucier/gauntlet/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/BenjaminLucier/gauntlet/releases/tag/v0.1.0
