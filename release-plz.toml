@@ -1,6 +1,20 @@
-# git-cliff: https://git-cliff.org/docs/configuration
-# Writes CHANGELOG.md sections from Conventional Commits. See CONTRIBUTING.md
-# ("Releasing") for how it is used.
+# release-plz: https://release-plz.dev/docs/config
+# Opens the release PR and publishes releases; see CONTRIBUTING.md
+# ("Releasing") and .github/workflows/release.yml.
+
+[workspace]
+# No semver_check: gauntlet has no library target, and cargo-semver-checks
+# only checks libraries.
+changelog_update = true
+# Only feat/fix/perf commits (including `feat!:`) trigger a release PR, so
+# docs, ci and chore changes (even to packaged files like the README) don't.
+release_commits = "^(feat|fix|perf)[(!:]"
+# The binaries are uploaded after release-plz creates the release, and
+# immutable releases lock a published release's assets, so it starts as a
+# draft and the workflow publishes it once every archive is up.
+git_release_draft = true
+# How long to wait for a published crate to appear in the crates.io index.
+publish_timeout = "10m"
 
 [changelog]
 header = """
@@ -11,13 +25,11 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
 """
 body = """
-{% if version -%}
-## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
-{% else -%}
-## [Unreleased]
-{% endif -%}
+## [{{ version | trim_start_matches(pat="v") }}]\
+{%- if release_link %}({{ release_link }}){% endif %} - {{ timestamp | date(format="%Y-%m-%d") }}
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | striptags | trim }}
 {% for commit in commits %}
@@ -25,16 +37,8 @@ body = """
 {% endfor %}
 {% endfor %}\n
 """
-footer = ""
 trim = true
-
-[git]
-conventional_commits = true
-# Only typed commits make it in; earlier free-form history is left out.
-filter_unconventional = true
-filter_commits = true
 protect_breaking_commits = true
-tag_pattern = "v[0-9].*"
 sort_commits = "oldest"
 # Groups appear in the order of their numeric prefix, which is hidden.
 commit_parsers = [
@@ -45,4 +49,5 @@ commit_parsers = [
     { message = "^docs", group = "<!-- 4 -->Documentation" },
     { message = "^chore\\(deps\\)", skip = true },
     { message = "^(ci|chore|test|build|style)", skip = true },
+    { message = ".*", skip = true },
 ]
