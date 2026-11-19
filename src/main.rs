@@ -69,7 +69,7 @@ USAGE:
 
   Everything else happens inside: press ? for keys. --yes (-y) skips confirmations.
   Open your data directory in your editor: its rust-project.json gives rust-analyzer
-  every working file. Your code is compiled with the rustc (Rust {MIN_RUST} or later) and,
+  every working file, and clippy on save. Your code is compiled with the rustc (Rust {MIN_RUST} or later) and,
   for a review, the clippy-driver on your PATH.
 
 PATHS AND ENVIRONMENT:

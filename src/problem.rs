@@ -556,18 +556,32 @@ impl Workspace {
     /// (Re)write `rust-project.json` listing every working file. Failing is
     /// only logged: it's a convenience for the editor.
     pub fn write_rust_project(&self) {
-        let path = self.rust_project_path();
+        self.put_rust_project(&self.working_files(), false);
+    }
+
+    /// At startup: write `rust-project.json` if there are working files and
+    /// it is missing or stale (an older gauntlet wrote it, or the toolchain moved).
+    pub fn ensure_rust_project(&self) {
         let files = self.working_files();
-        if let Err(e) = fs::write(&path, runner::rust_project_json(&files)) {
-            tracing::warn!("writing {}: {e}", path.display());
+        if !files.is_empty() {
+            self.put_rust_project(&files, true);
         }
     }
 
-    /// At startup: write `rust-project.json` if there are working files but
-    /// no such file.
-    pub fn ensure_rust_project(&self) {
-        if !self.rust_project_path().exists() && !self.working_files().is_empty() {
-            self.write_rust_project();
+    /// Write `rust-project.json` for `files`, unless `if_changed` and it's
+    /// already that. The build directory is made too: the editor's clippy
+    /// writes its output there, and fails if it's missing.
+    fn put_rust_project(&self, files: &[PathBuf], if_changed: bool) {
+        let path = self.rust_project_path();
+        if let Err(e) = fs::create_dir_all(&self.roots.build) {
+            tracing::warn!("creating {}: {e}", self.roots.build.display());
+        }
+        let text = runner::rust_project_json(files, &self.roots.data, &self.roots.build);
+        if if_changed && fs::read_to_string(&path).is_ok_and(|old| old == text) {
+            return;
+        }
+        if let Err(e) = fs::write(&path, text) {
+            tracing::warn!("writing {}: {e}", path.display());
         }
     }
 }
@@ -745,6 +759,10 @@ pub mod tests {
         assert_eq!(crates(), ["runs/3/option.rs", "two_sum.rs"]);
         // Lost: written again at startup.
         fs::remove_file(&path).unwrap();
+        ws.ensure_rust_project();
+        assert_eq!(crates().len(), 2);
+        // Stale (say, from an older gauntlet): rewritten at startup too.
+        fs::write(&path, r#"{"crates": []}"#).unwrap();
         ws.ensure_rust_project();
         assert_eq!(crates().len(), 2);
     }
