@@ -111,7 +111,8 @@ The header shows its working file,
 Open the data directory, `~/.local/share/gauntlet` (`%APPDATA%\gauntlet`),
 in your editor, then that file. It holds only your code; the tests are attached when gauntlet compiles
 it. Gauntlet keeps a `rust-project.json` there, so rust-analyzer works in
-every working file.
+every working file and shows clippy's warnings when you save (it needs the
+`rust-src` component for the standard library).
 
 Replace a `todo!()` and save: the tests run, and the Arena shows the compiler
 errors or the failures. Tests still hitting `todo!()` are counted on one line

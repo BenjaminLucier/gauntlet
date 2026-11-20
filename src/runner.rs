@@ -449,24 +449,52 @@ fn sysroot() -> Option<&'static str> {
 }
 
 /// The contents of a `rust-project.json` that makes each of `files` (paths
-/// relative to where the json goes) a standalone test crate. Written with
-/// `/` on every platform: rust-analyzer reads it as well on Windows.
-pub fn rust_project_json(files: &[PathBuf]) -> String {
+/// relative to `data`, where the json goes) a standalone test crate. Written
+/// with `/` on every platform: rust-analyzer reads it as well on Windows.
+///
+/// It also gives rust-analyzer a `flycheck` runnable: without one it runs no
+/// check on save for a project that isn't Cargo's. That runs `clippy-driver`
+/// as [`Env::lint`] does, on the saved file's crate (its `{label}`, which is
+/// its path), so the editor shows the warnings a review would. Its output
+/// goes in `build`.
+pub fn rust_project_json(files: &[PathBuf], data: &Path, build: &Path) -> String {
     let crates: Vec<serde_json::Value> = files
         .iter()
         .map(|f| {
             let root: Vec<String> = f.components().map(|c| c.as_os_str().to_string_lossy().into_owned()).collect();
+            let root = root.join("/");
             serde_json::json!({
-                "root_module": root.join("/"),
+                "root_module": root,
                 "edition": EDITION,
                 "deps": [],
                 "cfg": ["test"],
+                "build": { "label": root, "build_file": root, "target_kind": "test" },
             })
         })
         .collect();
-    let mut json = serde_json::json!({ "crates": crates });
+    let rmeta = build.join("editor_check.rmeta");
+    let flycheck = serde_json::json!({
+        "kind": "flycheck",
+        "program": "clippy-driver",
+        "args": [
+            "--edition", EDITION, "--test", "--emit=metadata", "--error-format=json",
+            "-C", "overflow-checks=on", "--crate-name", "editor_check",
+            "-o", rmeta.to_string_lossy(), "{label}",
+        ],
+        "cwd": data.to_string_lossy(),
+    });
+    let mut json = serde_json::json!({ "crates": crates, "runnables": [flycheck] });
     if let Some(sysroot) = sysroot() {
         json["sysroot"] = sysroot.into();
+        // rust-analyzer needs the std sources spelled out: given only
+        // `sysroot` it loads no std, so `todo!`, `Option` and the rest go
+        // unresolved and completion is empty. They come with rust-src.
+        let src = Path::new(sysroot).join("lib").join("rustlib").join("src").join("rust").join("library");
+        if src.is_dir() {
+            json["sysroot_src"] = src.to_string_lossy().into_owned().into();
+        } else {
+            tracing::warn!(?src, "no std sources; `rustup component add rust-src` for rust-analyzer");
+        }
     }
     let mut text = serde_json::to_string_pretty(&json).expect("JSON values serialize");
     text.push('\n');
@@ -984,19 +1012,31 @@ mod tests {
         // Joined with the platform's separator, written with `/`.
         let weird = Path::new("runs").join("3").join("we\"ird ' päth.rs");
         let files = [PathBuf::from("two_sum.rs"), weird];
-        let json: serde_json::Value = serde_json::from_str(&rust_project_json(&files)).unwrap();
+        let json: serde_json::Value =
+            serde_json::from_str(&rust_project_json(&files, Path::new("/data"), Path::new("/build"))).unwrap();
         let crates = json["crates"].as_array().unwrap();
         let roots: Vec<&str> = crates.iter().map(|c| c["root_module"].as_str().unwrap()).collect();
         assert_eq!(roots, ["two_sum.rs", "runs/3/we\"ird ' päth.rs"]);
         #[cfg(unix)]
         {
             // A backslash is just a character in a Unix file name.
-            let json = rust_project_json(&[PathBuf::from("a\\b.rs")]);
+            let json = rust_project_json(&[PathBuf::from("a\\b.rs")], Path::new("/data"), Path::new("/build"));
             let json: serde_json::Value = serde_json::from_str(&json).unwrap();
             assert_eq!(json["crates"][0]["root_module"], "a\\b.rs");
         }
         assert_eq!(json["crates"][0]["edition"], EDITION);
+        // Each crate is labelled with its path, which the flycheck runnable
+        // hands to clippy-driver from the data directory.
+        assert_eq!(json["crates"][1]["build"]["label"], "runs/3/we\"ird ' päth.rs");
+        let flycheck = &json["runnables"][0];
+        assert_eq!((&flycheck["kind"], &flycheck["program"]), (&"flycheck".into(), &"clippy-driver".into()));
+        assert_eq!(flycheck["cwd"], Path::new("/data").to_string_lossy().as_ref());
+        assert_eq!(flycheck["args"].as_array().unwrap().last().unwrap(), "{label}");
         assert!(json.get("sysroot").is_none_or(|s| s.as_str().is_some_and(|s| !s.is_empty())));
+        if let Some(src) = json.get("sysroot_src") {
+            let src = Path::new(src.as_str().unwrap());
+            assert!(src.starts_with(json["sysroot"].as_str().unwrap()) && src.ends_with("library"));
+        }
     }
 
     /// A shell running `script`: `sh -c` here, `cmd /C` on Windows.
